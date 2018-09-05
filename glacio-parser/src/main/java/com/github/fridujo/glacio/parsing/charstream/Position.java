@@ -11,10 +11,6 @@ public class Position {
         this.column = column;
     }
 
-    public int getLine() {
-        return line;
-    }
-
     public int getColumn() {
         return column;
     }
@@ -39,5 +35,9 @@ public class Position {
     @Override
     public int hashCode() {
         return Objects.hash(line, column);
+    }
+
+    public com.github.fridujo.glacio.ast.Position asModelPosition() {
+        return new com.github.fridujo.glacio.ast.Position(line, column);
     }
 }

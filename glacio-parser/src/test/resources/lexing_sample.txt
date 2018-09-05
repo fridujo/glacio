@@ -1,0 +1,19 @@
+# comment
+
+Feature: color
+
+    Background:
+        Given a color
+
+    @tag
+    Scenario: colors
+        Description here
+
+        Given yellow
+        When blue
+        Then green
+        And another
+
+    Scenario Outline: another
+    Examples
+    """ |

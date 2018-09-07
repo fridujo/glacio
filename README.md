@@ -1,4 +1,9 @@
 # Glacio
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0142d637ee44a86a201c5caba95a8d9)](https://www.codacy.com/app/ledoyen/glacio?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fridujo/glacio&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/fridujo/glacio.svg?branch=master)](https://travis-ci.com/fridujo/glacio)
+[![codecov](https://codecov.io/gh/fridujo/glacio/branch/master/graph/badge.svg)](https://codecov.io/gh/fridujo/glacio)
+[![License](https://img.shields.io/github/license/fridujo/spring-automocker.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Multi-level [Gherkin](https://docs.cucumber.io/gherkin/reference/)-like language.
 
 # What it is

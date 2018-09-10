@@ -34,19 +34,19 @@ import java.util.stream.Collectors;
 
 import static com.github.fridujo.glacio.parsing.parser.DynamicTokenDefinition.dynamicToken;
 
-public class Parser {
+public class AstParser {
 
     private final Pattern languageHintPattern = Pattern.compile("^language\\s*:\\s*(?<language>[^\\s]+)$");
     private final Lexer lexer;
     private final Languages languages;
 
-    public Parser(Lexer lexer, Languages languages) {
+    public AstParser(Lexer lexer, Languages languages) {
         this.lexer = lexer;
         this.languages = languages;
         this.lexer.setLanguageKeywords(languages.defaultLanguage());
     }
 
-    public Feature parseFeature() {
+    public Feature parseFeature() throws ParsingException {
         consumeComments(true);
         List<Tag> tags = parseTags();
         Token potentialFeature = lexer.next();

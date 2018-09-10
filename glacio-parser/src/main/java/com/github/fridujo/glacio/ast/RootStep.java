@@ -12,6 +12,10 @@ public class RootStep extends Step {
         this.keyword = keyword;
     }
 
+    public Keyword getKeyword() {
+        return keyword;
+    }
+
     @Override
     public String toString() {
         return keyword + " " + getText();

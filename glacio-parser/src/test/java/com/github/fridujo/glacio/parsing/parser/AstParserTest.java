@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ParserTest {
+class AstParserTest {
 
     static Stream<Arguments> missing_token_data_set() {
         return Stream.of(
@@ -40,7 +40,7 @@ class ParserTest {
 
     @Test
     void nominal_parsing() {
-        String text = Resource.toString("parsing_glacio_sample.feature");
+        String text = Resource.load("parsing_glacio_sample.feature").getContent();
 
         Feature feature = parseFeature(text);
 
@@ -88,8 +88,8 @@ class ParserTest {
 
     private Feature parseFeature(String text) {
         Lexer lexer = new Lexer(new CharStream(text));
-        Parser parser = new Parser(lexer, GherkinLanguages.load());
+        AstParser astParser = new AstParser(lexer, GherkinLanguages.load());
 
-        return parser.parseFeature();
+        return astParser.parseFeature();
     }
 }

@@ -33,7 +33,9 @@ Feature: User login
                 """
         And the user in on the login page
             Open a 'Chrome' browser
-            Navigate to 'https://www.yourapp.com'
+            Navigate to
+            | protocol | address         | path   |
+            | https    | www.yourapp.com | /login |
             Click on the 'Sign In' button
         When the user signs in
             Fill 'username' input with '${username}'
@@ -43,7 +45,7 @@ Feature: User login
             Relative URL is '/home'
 
 @tag3 @tag4
-    Scenario Outline: Successful login
+    Scenario Outline: Successful login using template
 
         Given a user with valid credentials
         And the user is on the login page with a <browser_type> browser

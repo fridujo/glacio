@@ -41,7 +41,7 @@ public class LexerTest {
 
     @Test
     void nominal() {
-        String text = Resource.toString("lexing_sample.txt");
+        String text = Resource.load("lexing_sample.txt").getContent();
         Lexer lexer = new Lexer(new CharStream(text));
 
         lexer.setLanguageKeywords(new LanguageKeywords(

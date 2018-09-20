@@ -1,6 +1,7 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -10,14 +11,16 @@ import java.util.zip.ZipFile;
 public class ZipResourceIterator implements Iterator<Resource> {
     private final String path;
     private final String suffix;
+    private final URI uri;
     private final ZipFile jarFile;
     private final Enumeration<? extends ZipEntry> entries;
     private Resource next;
 
-    public ZipResourceIterator(String zipPath, String path, String suffix) throws IOException {
+    public ZipResourceIterator(String zipPath, String path, String suffix, URI uri) throws IOException {
         this.path = path;
         this.suffix = suffix;
         jarFile = new ZipFile(zipPath);
+        this.uri = uri;
         entries = jarFile.entries();
 
         moveToNext();
@@ -50,8 +53,8 @@ public class ZipResourceIterator implements Iterator<Resource> {
         while (entries.hasMoreElements()) {
             ZipEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
-            if (entryName.startsWith(path) && Helpers.hasSuffix(suffix, entryName)) {
-                next = new ZipResource(jarFile, jarEntry);
+            if (entryName.startsWith(path) && PathHelpers.hasSuffix(suffix, entryName)) {
+                next = new ZipResource(jarFile, jarEntry, URI.create(uri.toString() + '/' + entryName.substring(path.length())));
                 break;
             }
         }

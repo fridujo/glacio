@@ -1,6 +1,10 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
+import static com.github.fridujo.glacio.running.runtime.io.PathHelpers.filePath;
+
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -10,18 +14,33 @@ import java.util.Iterator;
  */
 public class ZipResourceIteratorFactory implements ResourceIteratorFactory {
 
+    static String jarFilePath(URL jarUrl) throws GlacioIOException {
+        String urlFile = jarUrl.getFile();
+
+        int separatorIndex = urlFile.indexOf("!/");
+        if (separatorIndex == -1) {
+            throw new GlacioIOException("Expected a jar URL: " + jarUrl.toExternalForm());
+        }
+        try {
+            URL fileUrl = new URL(urlFile.substring(0, separatorIndex));
+            return filePath(fileUrl);
+        } catch (MalformedURLException e) {
+            throw new GlacioIOException(e);
+        }
+    }
+
     @Override
     public boolean isFactoryFor(URL url) {
         return url.getFile().contains("!/");
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URL url, String path, String suffix) throws GlacioIOException {
         try {
-            String jarPath = Helpers.jarFilePath(url);
-            return new ZipResourceIterator(jarPath, path, suffix);
-        } catch (IOException e) {
-            throw new CucumberException(e);
+            String jarPath = jarFilePath(url);
+            return new ZipResourceIterator(jarPath, path, suffix, url.toURI());
+        } catch (IOException | URISyntaxException e) {
+            throw new GlacioIOException(e);
         }
     }
 }

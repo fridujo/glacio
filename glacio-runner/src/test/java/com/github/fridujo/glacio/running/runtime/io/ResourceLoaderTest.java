@@ -1,12 +1,12 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class ResourceLoaderTest {
     private final File dir;
@@ -30,7 +30,12 @@ class ResourceLoaderTest {
 
     @Test
     void loads_resources_from_jar_on_classpath() {
-        Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader()).resources("cucumber", ".properties");
-        assertThat(files).hasSize(3);
+        Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader()).resources("META-INF/services", ".TestEngine");
+        assertThat(files).hasSize(1);
+        Resource resource = files.iterator().next();
+        assertThat(resource.getAbsolutePath()).endsWith(".jar!/META-INF/services/org.junit.platform.engine.TestEngine");
+        assertThat(resource.getContent()).contains("org.junit.jupiter.engine.JupiterTestEngine");
+        assertThat(resource.getURI().toString()).endsWith("/org.junit.platform.engine.TestEngine");
+        assertThat(resource.getClassName("")).isEqualTo("META-INF.services.org.junit.platform.engine.TestEngine");
     }
 }

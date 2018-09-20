@@ -16,7 +16,7 @@ public class ZipThenFileResourceIteratorFactory implements ResourceIteratorFacto
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URL url, String path, String suffix) throws GlacioIOException {
         if (zipResourceIteratorFactory.isFactoryFor(url)) {
             return zipResourceIteratorFactory.createIterator(url, path, suffix);
         } else {

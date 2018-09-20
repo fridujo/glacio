@@ -6,8 +6,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 public class ClasspathResourceIterable implements Iterable<Resource> {
-    private final ResourceIteratorFactory resourceIteratorFactory =
-        new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
+    private final ResourceIteratorFactory resourceIteratorFactory = new ZipThenFileResourceIteratorFactory();
 
     private final ClassLoader classLoader;
     private final String path;
@@ -20,9 +19,9 @@ public class ClasspathResourceIterable implements Iterable<Resource> {
     }
 
     @Override
-    public Iterator<Resource> iterator() {
+    public Iterator<Resource> iterator() throws GlacioIOException {
         try {
-            FlatteningIterator<Resource> iterator = new FlatteningIterator<Resource>();
+            FlatteningIterator<Resource> iterator = new FlatteningIterator<>();
             Enumeration<URL> resources = classLoader.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
@@ -31,8 +30,7 @@ public class ClasspathResourceIterable implements Iterable<Resource> {
             }
             return iterator;
         } catch (IOException e) {
-            throw new CucumberException(e);
+            throw new GlacioIOException(e);
         }
     }
-
 }

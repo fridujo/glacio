@@ -1,14 +1,11 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.github.fridujo.glacio.parsing.model.StringSource;
 
-public interface Resource {
+public interface Resource extends StringSource {
     String getPath();
 
     String getAbsolutePath();
-
-    InputStream getInputStream() throws IOException;
 
     String getClassName(String extension);
 }

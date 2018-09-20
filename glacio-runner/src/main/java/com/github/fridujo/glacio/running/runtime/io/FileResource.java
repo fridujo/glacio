@@ -1,9 +1,10 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URI;
+import java.nio.file.Files;
 
 public class FileResource implements Resource {
     private final File root;
@@ -42,17 +43,22 @@ public class FileResource implements Resource {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new FileInputStream(file);
+    public String getContent() throws UncheckedIOException {
+        try {
+            return new String(Files.readAllBytes(file.toPath().toAbsolutePath()));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public URI getURI() {
+        return file.toURI();
     }
 
     @Override
     public String getClassName(String extension) {
         String path = getPath();
         return path.substring(0, path.length() - extension.length()).replace(File.separatorChar, '.');
-    }
-
-    public File getFile() {
-        return file;
     }
 }

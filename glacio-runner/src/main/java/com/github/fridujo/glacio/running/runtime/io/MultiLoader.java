@@ -1,8 +1,5 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MultiLoader implements ResourceLoader {
     public static final String CLASSPATH_SCHEME = "classpath:";
 
@@ -12,21 +9,6 @@ public class MultiLoader implements ResourceLoader {
     public MultiLoader(ClassLoader classLoader) {
         classpath = new ClasspathResourceLoader(classLoader);
         fs = new FileResourceLoader();
-    }
-
-    public static List<String> packageName(List<String> glue) {
-        List<String> packageNames = new ArrayList<String>(glue.size());
-        for (String gluePath : glue) {
-            packageNames.add(packageName(gluePath));
-        }
-        return packageNames;
-    }
-
-    public static String packageName(String gluePath) {
-        if (isClasspathPath(gluePath)) {
-            gluePath = stripClasspathPrefix(gluePath);
-        }
-        return gluePath.replace('/', '.').replace('\\', '.');
     }
 
     private static boolean isClasspathPath(String path) {
@@ -45,5 +27,4 @@ public class MultiLoader implements ResourceLoader {
             return fs.resources(path, suffix);
         }
     }
-
 }

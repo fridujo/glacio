@@ -1,12 +1,12 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.NoSuchElementException;
-
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.NoSuchElementException;
+
+import org.junit.jupiter.api.Test;
 
 class FlatteningIteratorTest {
 
@@ -22,5 +22,13 @@ class FlatteningIteratorTest {
 
         assertThatExceptionOfType(NoSuchElementException.class)
             .isThrownBy(() -> fi.next());
+    }
+
+    @Test
+    void remove_operation_is_not_permitted() {
+        FlatteningIterator<Integer> fi = new FlatteningIterator<>();
+
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+            .isThrownBy(() -> fi.remove());
     }
 }

@@ -1,10 +1,10 @@
 package com.github.fridujo.glacio.running.runtime.io;
 
+import static com.github.fridujo.glacio.running.runtime.io.PathHelpers.filePath;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
-
-import static com.github.fridujo.glacio.running.runtime.io.Helpers.filePath;
 
 /**
  * Factory which creates {@link FileResourceIterator}s.
@@ -24,7 +24,7 @@ public class FileResourceIteratorFactory implements ResourceIteratorFactory {
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URL url, String path, String suffix) throws GlacioIOException {
         File file = new File(filePath(url));
         File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
         return FileResourceIterator.createClasspathFileResourceIterator(rootDir, file, suffix);

@@ -1,5 +1,15 @@
 package com.github.fridujo.glacio.parsing.parser;
 
+import static com.github.fridujo.glacio.parsing.parser.DynamicTokenDefinition.dynamicToken;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.github.fridujo.glacio.ast.Background;
 import com.github.fridujo.glacio.ast.DataTable;
 import com.github.fridujo.glacio.ast.DocString;
@@ -23,16 +33,6 @@ import com.github.fridujo.glacio.parsing.lexer.Lexer;
 import com.github.fridujo.glacio.parsing.lexer.Token;
 import com.github.fridujo.glacio.parsing.lexer.TokenSequence;
 import com.github.fridujo.glacio.parsing.lexer.TokenType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static com.github.fridujo.glacio.parsing.parser.DynamicTokenDefinition.dynamicToken;
 
 public class AstParser {
 

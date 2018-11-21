@@ -1,13 +1,13 @@
 package com.github.fridujo.glacio.parsing.i18n;
 
-import com.eclipsesource.json.JsonObject;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.eclipsesource.json.JsonObject;
 
 public class GherkinJsonMapper {
 

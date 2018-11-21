@@ -1,8 +1,6 @@
 package com.github.fridujo.glacio.parsing.lexer;
 
-import com.github.fridujo.glacio.parsing.charstream.CharStream;
-import com.github.fridujo.glacio.parsing.charstream.Position;
-import com.github.fridujo.glacio.parsing.i18n.LanguageKeywords;
+import static com.github.fridujo.glacio.parsing.tool.Strings.repeat;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -12,7 +10,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.function.Predicate;
 
-import static com.github.fridujo.glacio.parsing.tool.Strings.repeat;
+import com.github.fridujo.glacio.parsing.charstream.CharStream;
+import com.github.fridujo.glacio.parsing.charstream.Position;
+import com.github.fridujo.glacio.parsing.i18n.LanguageKeywords;
 
 // TODO make the next function use greedy-match as ANTLR does to avoid matching prematurely
 // when there is overlapping keywords (like 'Scenario' and 'Scenario Outline')

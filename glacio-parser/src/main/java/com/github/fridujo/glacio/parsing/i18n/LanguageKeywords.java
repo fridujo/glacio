@@ -1,8 +1,8 @@
 package com.github.fridujo.glacio.parsing.i18n;
 
-import java.util.Set;
-
 import static java.util.Collections.emptySet;
+
+import java.util.Set;
 
 public class LanguageKeywords {
 

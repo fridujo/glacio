@@ -1,10 +1,11 @@
 package com.github.fridujo.glacio.parsing.i18n;
 
-import com.github.fridujo.glacio.parsing.charstream.Position;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import org.junit.jupiter.api.Test;
+
+import com.github.fridujo.glacio.parsing.charstream.Position;
 
 class GherkinLanguagesTest {
 

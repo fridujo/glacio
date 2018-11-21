@@ -1,13 +1,13 @@
 package tool;
 
-import com.github.fridujo.glacio.parsing.model.StringSource;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import com.github.fridujo.glacio.parsing.model.StringSource;
 
 public class Resource {
 

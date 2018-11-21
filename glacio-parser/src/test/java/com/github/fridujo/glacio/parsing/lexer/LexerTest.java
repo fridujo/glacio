@@ -1,15 +1,5 @@
 package com.github.fridujo.glacio.parsing.lexer;
 
-import com.github.fridujo.glacio.parsing.charstream.CharStream;
-import com.github.fridujo.glacio.parsing.charstream.Position;
-import com.github.fridujo.glacio.parsing.i18n.LanguageKeywords;
-import org.junit.jupiter.api.Test;
-import tool.Resource;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static com.github.fridujo.glacio.parsing.lexer.TokenType.AND;
 import static com.github.fridujo.glacio.parsing.lexer.TokenType.BACKGROUND;
 import static com.github.fridujo.glacio.parsing.lexer.TokenType.DOC_STRING_DELIMITER;
@@ -24,6 +14,17 @@ import static com.github.fridujo.glacio.parsing.lexer.TokenType.THEN;
 import static com.github.fridujo.glacio.parsing.lexer.TokenType.WHEN;
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import tool.Resource;
+
+import com.github.fridujo.glacio.parsing.charstream.CharStream;
+import com.github.fridujo.glacio.parsing.charstream.Position;
+import com.github.fridujo.glacio.parsing.i18n.LanguageKeywords;
 
 public class LexerTest {
     private static final Position UNUSED_POSITION = new Position(-1, -1);

@@ -1,11 +1,27 @@
 package com.github.fridujo.glacio.parsing.model;
 
+import java.io.UncheckedIOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.github.fridujo.glacio.ast.Background;
 import com.github.fridujo.glacio.ast.KeywordType;
 import com.github.fridujo.glacio.ast.RootStep;
 import com.github.fridujo.glacio.ast.Scenario;
 import com.github.fridujo.glacio.ast.ScenarioOutline;
 import com.github.fridujo.glacio.ast.TableRow;
+import com.github.fridujo.glacio.ast.Tag;
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Example;
@@ -17,18 +33,6 @@ import com.github.fridujo.glacio.parsing.charstream.CharStream;
 import com.github.fridujo.glacio.parsing.i18n.Languages;
 import com.github.fridujo.glacio.parsing.lexer.Lexer;
 import com.github.fridujo.glacio.parsing.parser.AstParser;
-
-import java.io.UncheckedIOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ModelParser {
 
@@ -60,41 +64,49 @@ public class ModelParser {
             .map(s -> mapToStep(s, true, Collections.emptyMap()))
             .collect(Collectors.toList());
 
+        Set<String> featureTags = mapTags(astFeature.getTags());
         return astFeature.getScenarios()
             .stream()
-            .map(s -> mapToExamples(s, backgroundSteps))
+            .map(s -> mapToExamples(s, backgroundSteps, featureTags))
             .flatMap(sl -> sl.stream())
             .collect(Collectors.toList());
     }
 
-    private List<Example> mapToExamples(Scenario scenario, List<Step> backgroundSteps) {
+    private List<Example> mapToExamples(Scenario scenario, List<Step> backgroundSteps, Set<String> featureTags) {
         if (scenario instanceof ScenarioOutline) {
-            return mapFromScenarioOutline((ScenarioOutline) scenario, backgroundSteps);
+            return mapFromScenarioOutline((ScenarioOutline) scenario, backgroundSteps, featureTags);
         } else {
-            return mapFromScenario(scenario, backgroundSteps);
+            return mapFromScenario(scenario, backgroundSteps, featureTags);
         }
     }
 
-    private List<Example> mapFromScenario(Scenario scenario, List<Step> backgroundSteps) {
+    private List<Example> mapFromScenario(Scenario scenario, List<Step> backgroundSteps, Set<String> featureTags) {
         List<Step> scenarioSteps = scenario
             .getSteps()
             .stream()
             .map(s -> mapToStep(s, false, Collections.emptyMap()))
             .collect(Collectors.toList());
 
+        Set<String> tags = new HashSet<>();
+        tags.addAll(featureTags);
+        tags.addAll(mapTags(scenario.getTags()));
         List<Step> steps = new ArrayList<>();
         steps.addAll(backgroundSteps);
         steps.addAll(scenarioSteps);
-        return Collections.singletonList(new Example(scenario.getName(), Collections.emptyMap(), steps));
+        return Collections.singletonList(new Example(scenario.getName(), Collections.emptyMap(), steps, tags));
     }
 
-    private List<Example> mapFromScenarioOutline(ScenarioOutline scenarioOutline, List<Step> backgroundSteps) {
+    private List<Example> mapFromScenarioOutline(ScenarioOutline scenarioOutline, List<Step> backgroundSteps, Set<String> featureTags) {
         TableRow header = scenarioOutline.getExamples().getHeader();
 
         List<Map<String, String>> parametersList = scenarioOutline.getExamples().getBody()
             .stream()
             .map(parameterValues -> buildParameters(header, parameterValues))
             .collect(Collectors.toList());
+
+        Set<String> tags = new HashSet<>();
+        tags.addAll(featureTags);
+        tags.addAll(mapTags(scenarioOutline.getTags()));
 
         List<Example> examples = new ArrayList<>();
         for (Map<String, String> parameters : parametersList) {
@@ -107,7 +119,7 @@ public class ModelParser {
             List<Step> steps = new ArrayList<>();
             steps.addAll(backgroundSteps);
             steps.addAll(scenarioSteps);
-            examples.add(new Example(name, parameters, steps));
+            examples.add(new Example(name, parameters, steps, tags));
         }
         return examples;
     }
@@ -183,5 +195,9 @@ public class ModelParser {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    private Set<String> mapTags(Collection<Tag> tags) {
+        return tags.stream().map(t -> t.getName()).collect(Collectors.toSet());
     }
 }

@@ -1,9 +1,9 @@
 package com.github.fridujo.glacio.parsing.lexer;
 
-import com.github.fridujo.glacio.parsing.charstream.Position;
-
 import java.util.Arrays;
 import java.util.Objects;
+
+import com.github.fridujo.glacio.parsing.charstream.Position;
 
 public class Token {
     private final TokenType type;

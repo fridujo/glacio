@@ -1,5 +1,12 @@
 package com.github.fridujo.glacio.parsing.model;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import tool.Resource;
+
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Example;
@@ -8,12 +15,6 @@ import com.github.fridujo.glacio.model.Keyword;
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.model.StepArgument;
 import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
-import org.junit.jupiter.api.Test;
-import tool.Resource;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ModelParserTest {
 

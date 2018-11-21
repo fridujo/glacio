@@ -1,11 +1,11 @@
 package com.github.fridujo.glacio.parsing.parser;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import com.github.fridujo.glacio.parsing.ParsingException;
 import com.github.fridujo.glacio.parsing.lexer.FixedTokenDefinition;
 import com.github.fridujo.glacio.parsing.lexer.Token;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class MissingTokenException extends ParsingException {
 

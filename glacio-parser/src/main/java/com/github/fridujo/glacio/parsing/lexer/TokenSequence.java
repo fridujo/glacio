@@ -1,10 +1,10 @@
 package com.github.fridujo.glacio.parsing.lexer;
 
-import com.github.fridujo.glacio.parsing.charstream.Position;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.github.fridujo.glacio.parsing.charstream.Position;
 
 public class TokenSequence {
     private final Position position;

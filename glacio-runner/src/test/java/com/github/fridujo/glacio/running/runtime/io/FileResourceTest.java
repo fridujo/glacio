@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.File;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
 
 import org.junit.jupiter.api.Test;
 

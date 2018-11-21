@@ -15,7 +15,7 @@ public class ResourceLoaderClassFinder implements ClassFinder {
 
     @Override
     public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
-        Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
+        Collection<Class<? extends T>> result = new HashSet<>();
         String packagePath = "classpath:" + packageName.replace('.', '/').replace(File.separatorChar, '/');
         for (Resource classResource : resourceLoader.resources(packagePath, ".class")) {
             String className = classResource.getClassName(".class");
@@ -32,6 +32,7 @@ public class ResourceLoaderClassFinder implements ClassFinder {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Class<? extends T> loadClass(String className) throws ClassNotFoundException {
         return (Class<? extends T>) classLoader.loadClass(className);
     }

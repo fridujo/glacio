@@ -9,4 +9,8 @@ public class GlacioRunnerException extends RuntimeException {
     public GlacioRunnerException(Exception cause) {
         super(cause);
     }
+
+    public GlacioRunnerException(String message, Exception cause) {
+        super(message, cause);
+    }
 }

@@ -1,5 +1,16 @@
 package com.github.fridujo.glacio.parsing.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import tool.Resource;
+
 import com.github.fridujo.glacio.ast.DataTable;
 import com.github.fridujo.glacio.ast.Feature;
 import com.github.fridujo.glacio.ast.Scenario;
@@ -11,16 +22,6 @@ import com.github.fridujo.glacio.parsing.ParsingException;
 import com.github.fridujo.glacio.parsing.charstream.CharStream;
 import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
 import com.github.fridujo.glacio.parsing.lexer.Lexer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import tool.Resource;
-
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class AstParserTest {
 

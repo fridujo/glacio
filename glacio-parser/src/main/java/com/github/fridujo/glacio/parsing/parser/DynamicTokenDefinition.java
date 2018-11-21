@@ -1,8 +1,8 @@
 package com.github.fridujo.glacio.parsing.parser;
 
-import com.github.fridujo.glacio.parsing.lexer.TokenType;
-
 import java.util.Set;
+
+import com.github.fridujo.glacio.parsing.lexer.TokenType;
 
 public class DynamicTokenDefinition {
     private final TokenType type;

@@ -88,8 +88,8 @@ class JavaExecutableLookupTest {
             .as("Execution status " + executionResult)
             .isEqualTo(Status.ABORT);
         assertThat(executionResult.getMessage())
-            .isEqualTo("Class " + JavaExecutable.class.getName() + " can not access a member of class "
-                + TestStepDef.class.getName() + " with modifiers \"\"");
+            .contains(JavaExecutable.class.getName())
+            .contains("not access a member of class " + TestStepDef.class.getName() + " with modifiers \"\"");
     }
 
     @Test

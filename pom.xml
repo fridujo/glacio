@@ -134,6 +134,7 @@
                         </formats>
                         <maxmem>256m</maxmem>
                         <aggregate>true</aggregate>
+                        <quiet>true</quiet>
                     </configuration>
                 </plugin>
                 <plugin>

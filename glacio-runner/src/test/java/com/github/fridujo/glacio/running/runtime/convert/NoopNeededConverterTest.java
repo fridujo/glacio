@@ -8,7 +8,6 @@ import com.github.fridujo.glacio.running.api.convert.Converter;
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
 import com.github.fridujo.glacio.running.api.convert.SourceSet;
 import com.github.fridujo.glacio.running.api.convert.Value;
-import com.github.fridujo.glacio.running.runtime.convert.NoopNeededConverter;
 
 class NoopNeededConverterTest {
 

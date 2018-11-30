@@ -15,6 +15,7 @@ import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.api.Given;
 import com.github.fridujo.glacio.running.api.Then;
 import com.github.fridujo.glacio.running.api.When;
+import com.github.fridujo.glacio.running.runtime.convert.MethodParameterConverter;
 import com.github.fridujo.glacio.running.runtime.io.ClassFinder;
 import com.github.fridujo.glacio.running.runtime.io.MultiLoader;
 import com.github.fridujo.glacio.running.runtime.io.ResourceLoaderClassFinder;
@@ -23,6 +24,7 @@ public class JavaExecutableLookup implements ExecutableLookup {
 
     private final Map<Pattern, Method> methodsByPattern;
     private final GlueFactory glueFactory;
+    private final MethodParameterConverter methodParameterConverter = new MethodParameterConverter();
 
     public JavaExecutableLookup(ClassLoader classLoader, Set<String> gluePaths, GlueFactory glueFactory) {
         this.glueFactory = glueFactory;
@@ -74,7 +76,7 @@ public class JavaExecutableLookup implements ExecutableLookup {
         } else {
             Map.Entry<Pattern, Method> match = matches.iterator().next();
             Method method = match.getValue();
-            return new JavaExecutable(glueFactory, step, match.getKey(), method);
+            return new JavaExecutable(glueFactory, methodParameterConverter, step, match.getKey(), method);
         }
     }
 }

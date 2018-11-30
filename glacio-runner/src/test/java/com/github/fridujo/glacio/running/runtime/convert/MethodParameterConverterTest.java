@@ -36,14 +36,14 @@ class MethodParameterConverterTest {
     void default_converter_nominal_uses() throws NoSuchMethodException {
         MethodParameterConverter methodParameterConverter = new MethodParameterConverter();
         Object[] rawParameters = new Object[]{"test", 1, new NotMatchingConverter()};
-        Method sampleMethod = TestInterface.class.getDeclaredMethod("sampleMethod", String.class, Integer.class, Object.class);
+        Method sampleMethod = TestInterface.class.getDeclaredMethod("sampleMethod", String.class, int.class, Object.class);
         Object[] parameters = methodParameterConverter.convert(rawParameters, sampleMethod);
 
         assertThat(parameters).isEqualTo(rawParameters);
     }
 
     interface TestInterface {
-        void sampleMethod(String p1, Integer p2, Object p3);
+        void sampleMethod(String p1, int p2, Object p3);
     }
 
     static class NotMatchingConverter implements Converter {

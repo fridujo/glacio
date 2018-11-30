@@ -1,16 +1,13 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
-import com.github.fridujo.glacio.running.api.convert.Converter;
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
-import com.github.fridujo.glacio.running.api.convert.SourceSet;
 import com.github.fridujo.glacio.running.api.convert.Value;
 
-public class NoopNeededConverter implements Converter {
+public class NoopNeededConverter extends AbstractPositionedParameterConverter {
     @Override
-    public Value convert(SourceSet sourceSet, ParameterDescriptor parameterDescriptor) {
-        Value value = sourceSet.atPosition(parameterDescriptor.position);
-        if (value.present && parameterDescriptor.type.isAssignableFrom(value.clazz)) {
-            return value;
+    public Value convert(Value rawValue, ParameterDescriptor parameterDescriptor) {
+        if (rawValue.present && parameterDescriptor.type.isAssignableFrom(rawValue.clazz)) {
+            return rawValue;
         }
         return Value.absent();
     }

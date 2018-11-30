@@ -9,16 +9,19 @@ import java.util.stream.IntStream;
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.runtime.ExecutionResult;
 import com.github.fridujo.glacio.running.runtime.Status;
+import com.github.fridujo.glacio.running.runtime.convert.MethodParameterConverter;
 
 class JavaExecutable implements Executable {
 
     private final GlueFactory glueFactory;
+    private final MethodParameterConverter methodParameterConverter;
     private final Step step;
     private final Pattern pattern;
     private final Method method;
 
-    JavaExecutable(GlueFactory glueFactory, Step step, Pattern pattern, Method method) {
+    JavaExecutable(GlueFactory glueFactory, MethodParameterConverter methodParameterConverter, Step step, Pattern pattern, Method method) {
         this.glueFactory = glueFactory;
+        this.methodParameterConverter = methodParameterConverter;
         this.step = step;
         this.pattern = pattern;
         this.method = method;
@@ -28,9 +31,9 @@ class JavaExecutable implements Executable {
     public ExecutionResult execute() {
         Object[] rawParameters = extractParameters(step);
         Object glue = glueFactory.getGlue(method.getDeclaringClass());
-        // TODO convert parameters to the target type in an open/close way
+        Object[] parameters = methodParameterConverter.convert(rawParameters, method);
         try {
-            method.invoke(glue, rawParameters);
+            method.invoke(glue, parameters);
             return new ExecutionResult(Status.SUCCESS);
         } catch (IllegalAccessException | IllegalArgumentException e) {
             return new ExecutionResult(Status.ABORT, e.getMessage(), e);

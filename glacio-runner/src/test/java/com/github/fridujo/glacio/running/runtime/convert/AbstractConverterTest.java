@@ -38,6 +38,10 @@ abstract class AbstractConverterTest {
         return descriptor(validTargetType);
     }
 
+    protected SourceSet validSourceSet() {
+        return SourceSet.fromRaw(validSource);
+    }
+
     @Test
     void missing_source_is_not_converted() {
         SourceSet sourceSet = SourceSet.empty();

@@ -1,5 +1,6 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
+import static com.github.fridujo.glacio.running.runtime.convert.ParameterDescriptors.descriptor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -55,7 +56,7 @@ class ToNumberConverterTest {
     @MethodSource("conversion_test_cases")
     void string_to_number_conversion(String input, Class<?> targetType, Object expectedValue) {
         SourceSet sourceSet = SourceSet.fromRaw(input);
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, targetType, null);
+        ParameterDescriptor parameterDescriptor = descriptor(targetType);
         Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
 
         assertThat(converted.present).isTrue();
@@ -65,7 +66,7 @@ class ToNumberConverterTest {
     @Test
     void no_conversion_when_source_is_absent() {
         SourceSet sourceSet = SourceSet.empty();
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, int.class, null);
+        ParameterDescriptor parameterDescriptor = descriptor(int.class);
         Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
 
         assertThat(converted.present).isFalse();
@@ -74,7 +75,7 @@ class ToNumberConverterTest {
     @Test
     void no_conversion_when_target_type_is_not_a_number() {
         SourceSet sourceSet = SourceSet.fromRaw("2");
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, String.class, null);
+        ParameterDescriptor parameterDescriptor = descriptor(String.class);
         Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
 
         assertThat(converted.present).isFalse();

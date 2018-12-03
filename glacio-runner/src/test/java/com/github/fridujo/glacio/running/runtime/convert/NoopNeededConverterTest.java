@@ -1,5 +1,6 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
+import static com.github.fridujo.glacio.running.runtime.convert.ParameterDescriptors.descriptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class NoopNeededConverterTest {
     @Test
     void source_matches_when_target_is_a_supertype() {
         SourceSet sourceSet = SourceSet.fromRaw("test");
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, Object.class, null);
+        ParameterDescriptor parameterDescriptor = descriptor(Object.class);
         Value value = converter.convert(sourceSet, parameterDescriptor);
 
         assertThat(value.present).isTrue();
@@ -26,7 +27,7 @@ class NoopNeededConverterTest {
     @Test
     void source_mismatches_when_target_is_a_subtype() {
         SourceSet sourceSet = SourceSet.fromRaw(new Object());
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, String.class, null);
+        ParameterDescriptor parameterDescriptor = descriptor(String.class);
         Value value = converter.convert(sourceSet, parameterDescriptor);
 
         assertThat(value.present).isFalse();
@@ -35,7 +36,7 @@ class NoopNeededConverterTest {
     @Test
     void returns_absent_when_source_has_no_matching_position() {
         SourceSet sourceSet = SourceSet.fromRaw("test");
-        ParameterDescriptor parameterDescriptor = new ParameterDescriptor(1, Object.class, null);
+        ParameterDescriptor parameterDescriptor = descriptor(1, Object.class);
         Value value = converter.convert(sourceSet, parameterDescriptor);
 
         assertThat(value.present).isFalse();

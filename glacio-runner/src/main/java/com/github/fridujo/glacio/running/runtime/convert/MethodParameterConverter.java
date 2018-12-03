@@ -1,6 +1,7 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
 import java.lang.reflect.Executable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,16 +10,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.fridujo.glacio.running.api.convert.Converter;
+import com.github.fridujo.glacio.running.api.convert.ParameterConverter;
+import com.github.fridujo.glacio.running.api.convert.ParameterConverterAware;
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
 import com.github.fridujo.glacio.running.api.convert.SourceSet;
 import com.github.fridujo.glacio.running.api.convert.Value;
 
-public class MethodParameterConverter {
+public class MethodParameterConverter implements ParameterConverter {
 
     private final Set<Converter> converters;
 
     MethodParameterConverter(Set<Converter> converters) {
         this.converters = converters;
+        this.converters.forEach(c -> {
+            if (c instanceof ParameterConverterAware) {
+                ((ParameterConverterAware) c).setConverter(this);
+            }
+        });
     }
 
     public MethodParameterConverter() {
@@ -49,7 +57,7 @@ public class MethodParameterConverter {
             .collect(Collectors.toList());
     }
 
-    private Object convert(SourceSet sourceSet, ParameterDescriptor parameterDescriptor) {
+    public Object convert(SourceSet sourceSet, ParameterDescriptor parameterDescriptor) {
         for (Converter converter : converters) {
             Value value = converter.convert(sourceSet, parameterDescriptor);
             if (value.present) {
@@ -62,8 +70,9 @@ public class MethodParameterConverter {
     private List<ParameterDescriptor> buildParameterDescriptors(Executable method) {
         List<ParameterDescriptor> parameterDescriptors = new ArrayList<>();
         Class<?>[] parameterTypes = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
         for (int i = 0; i < method.getParameterCount(); i++) {
-            parameterDescriptors.add(new ParameterDescriptor(i, parameterTypes[i], method));
+            parameterDescriptors.add(new ParameterDescriptor(i, parameterTypes[i], genericParameterTypes[i], method));
         }
         return parameterDescriptors;
     }

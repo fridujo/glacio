@@ -7,21 +7,21 @@ import java.util.Arrays;
 
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
 
-class ParameterDescriptors {
+public class ParameterDescriptors {
 
-    static ParameterDescriptor descriptor(Class<?> clazz) {
+    public static ParameterDescriptor descriptor(Class<?> clazz) {
         return descriptor(0, clazz);
     }
 
-    static ParameterDescriptor descriptor(int position, Class<?> clazz) {
+    public static ParameterDescriptor descriptor(int position, Class<?> clazz) {
         return new ParameterDescriptor(position, clazz, clazz, null);
     }
 
-    static ParameterDescriptor descriptor(TypeReference typeReference) {
+    public static ParameterDescriptor descriptor(TypeReference typeReference) {
         return new ParameterDescriptor(0, typeReference.rawType(), typeReference.type, null);
     }
 
-    static ParameterDescriptor descriptorForMethodArgument(Class<?> clazz, String methodName, int argumentPosition) {
+    public static ParameterDescriptor descriptorForMethodArgument(Class<?> clazz, String methodName, int argumentPosition) {
         Method method = Arrays.stream(clazz.getDeclaredMethods())
             .filter(m -> m.getName().equals(methodName))
             .findFirst()

@@ -9,19 +9,21 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.github.fridujo.glacio.running.api.convert.Converter;
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
 import com.github.fridujo.glacio.running.api.convert.SourceSet;
 import com.github.fridujo.glacio.running.api.convert.Value;
 
-class ToNumberConverterTest {
+class ToNumberConverterTest extends AbstractConverterTest {
 
-    private final Converter toNumberConverter = new ToNumberConverter();
+    ToNumberConverterTest() {
+        super(new ToNumberConverter(),
+            "42", Integer.class,
+            new Object(), String.class);
+    }
 
     static List<Arguments> conversion_test_cases() {
         return Arrays.asList(
@@ -57,27 +59,9 @@ class ToNumberConverterTest {
     void string_to_number_conversion(String input, Class<?> targetType, Object expectedValue) {
         SourceSet sourceSet = SourceSet.fromRaw(input);
         ParameterDescriptor parameterDescriptor = descriptor(targetType);
-        Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
+        Value converted = converterUnderTest.convert(sourceSet, parameterDescriptor);
 
         assertThat(converted.present).isTrue();
         assertThat(converted.value).isEqualTo(expectedValue);
-    }
-
-    @Test
-    void no_conversion_when_source_is_absent() {
-        SourceSet sourceSet = SourceSet.empty();
-        ParameterDescriptor parameterDescriptor = descriptor(int.class);
-        Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
-
-        assertThat(converted.present).isFalse();
-    }
-
-    @Test
-    void no_conversion_when_target_type_is_not_a_number() {
-        SourceSet sourceSet = SourceSet.fromRaw("2");
-        ParameterDescriptor parameterDescriptor = descriptor(String.class);
-        Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
-
-        assertThat(converted.present).isFalse();
     }
 }

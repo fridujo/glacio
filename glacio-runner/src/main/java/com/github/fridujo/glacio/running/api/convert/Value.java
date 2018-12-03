@@ -62,12 +62,16 @@ public class Value {
         return value;
     }
 
-    public <T> Value map(Function<T, ?> transformation) {
+    public <T> Value mapPresent(Function<T, ?> transformation) {
+        return mapPresent(transformation, ABSENT);
+    }
+
+    public <T> Value mapPresent(Function<T, ?> transformation, Value defaultValue) {
         final Value value;
         if (present) {
             value = Value.present(transformation.apply((T) this.value));
         } else {
-            value = ABSENT;
+            value = defaultValue;
         }
         return value;
     }

@@ -10,6 +10,6 @@ public class DocStringToStringConverter extends AbstractPositionedParameterConve
         return rawValue
             .filterType(DocString.class)
             .filter(String.class == parameterDescriptor.type)
-            .map(DocString::getContent);
+            .mapPresent(DocString::getContent);
     }
 }

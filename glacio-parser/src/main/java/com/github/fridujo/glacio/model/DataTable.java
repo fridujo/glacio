@@ -4,9 +4,13 @@ import java.util.List;
 
 public class DataTable implements StepArgument {
     private final List<Row> rows;
+    private final int minWidth;
+    private final int maxWidth;
 
     public DataTable(List<Row> rows) {
         this.rows = rows;
+        minWidth = rows.stream().mapToInt(Row::length).min().orElse(0);
+        maxWidth = rows.stream().mapToInt(Row::length).max().orElse(0);
     }
 
     @Override
@@ -16,6 +20,14 @@ public class DataTable implements StepArgument {
 
     public List<Row> getRows() {
         return rows;
+    }
+    
+    public boolean isSquare() {
+        return minWidth == maxWidth;
+    }
+    
+    public boolean hasWidth(int width) {
+        return width <= minWidth;
     }
 
     public static class Row {
@@ -27,6 +39,10 @@ public class DataTable implements StepArgument {
 
         public List<String> getCells() {
             return cells;
+        }
+
+        public int length() {
+            return cells.size();
         }
     }
 }

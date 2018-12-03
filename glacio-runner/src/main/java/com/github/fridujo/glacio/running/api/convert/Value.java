@@ -44,6 +44,10 @@ public class Value {
         return filter(v -> clazz.equals(v.clazz));
     }
 
+    public <T> Value filterValue(Predicate<T> valuePredicate) {
+        return filter(v -> valuePredicate.test((T) v.value));
+    }
+
     public Value filter(boolean b) {
         return filter(v -> b);
     }

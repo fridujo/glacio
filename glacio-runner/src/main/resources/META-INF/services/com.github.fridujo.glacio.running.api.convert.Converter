@@ -1,2 +1,4 @@
 com.github.fridujo.glacio.running.runtime.convert.NoopNeededConverter
 com.github.fridujo.glacio.running.runtime.convert.ToNumberConverter
+com.github.fridujo.glacio.running.runtime.convert.DocStringToStringConverter
+

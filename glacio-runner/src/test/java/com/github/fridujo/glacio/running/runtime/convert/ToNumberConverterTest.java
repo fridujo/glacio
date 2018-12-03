@@ -64,7 +64,7 @@ class ToNumberConverterTest {
 
     @Test
     void no_conversion_when_source_is_absent() {
-        SourceSet sourceSet = SourceSet.fromRaw();
+        SourceSet sourceSet = SourceSet.empty();
         ParameterDescriptor parameterDescriptor = new ParameterDescriptor(0, int.class, null);
         Value converted = toNumberConverter.convert(sourceSet, parameterDescriptor);
 

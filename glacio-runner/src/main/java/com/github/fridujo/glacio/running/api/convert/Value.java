@@ -2,6 +2,10 @@ package com.github.fridujo.glacio.running.api.convert;
 
 import static com.github.fridujo.glacio.running.api.convert.Primitives.wrapperOf;
 
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
  * Similar to {@link java.util.Optional} except a {@code null} value can be present.<br/>
  * <p>
@@ -33,6 +37,34 @@ public class Value {
 
     @Override
     public String toString() {
-        return present ? "{" + value + '}' : "<absent>";
+        return present ? Objects.toString(value) : "<absent>";
+    }
+
+    public Value filterType(Class<?> clazz) {
+        return filter(v -> clazz.equals(v.clazz));
+    }
+
+    public Value filter(boolean b) {
+        return filter(v -> b);
+    }
+
+    public Value filter(Predicate<Value> predicate) {
+        final Value value;
+        if (present && predicate.test(this)) {
+            value = this;
+        } else {
+            value = ABSENT;
+        }
+        return value;
+    }
+
+    public <T> Value map(Function<T, ?> transformation) {
+        final Value value;
+        if (present) {
+            value = Value.present(transformation.apply((T) this.value));
+        } else {
+            value = ABSENT;
+        }
+        return value;
     }
 }

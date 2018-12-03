@@ -9,6 +9,10 @@ public final class SourceSet {
         this.valuesByPosition = valuesByPosition;
     }
 
+    public static SourceSet empty() {
+        return fromRaw();
+    }
+
     public static SourceSet fromRaw(Object... rawParameters) {
         LinkedHashMap<Integer, Value> valuesByPosition = new LinkedHashMap<>();
         for (int i = 0; i < rawParameters.length; i++) {

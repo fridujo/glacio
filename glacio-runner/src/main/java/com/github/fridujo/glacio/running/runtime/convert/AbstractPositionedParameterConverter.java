@@ -1,5 +1,7 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
+import java.util.Collections;
+
 import com.github.fridujo.glacio.running.api.convert.Converter;
 import com.github.fridujo.glacio.running.api.convert.ParameterConverter;
 import com.github.fridujo.glacio.running.api.convert.ParameterConverterAware;
@@ -27,7 +29,7 @@ public abstract class AbstractPositionedParameterConverter implements Converter,
         if (parameterConverter == null) {
             throw new IllegalStateException("ParameterConverter must be set to perform parameter conversion");
         }
-        return (T) parameterConverter.convert(SourceSet.fromRaw(value), new ParameterDescriptor(0, keyType, keyType, null));
+        return (T) parameterConverter.convert(SourceSet.fromRaw(value), new ParameterDescriptor(0, keyType, keyType, Collections.emptyList(), null));
     }
 
     @Override

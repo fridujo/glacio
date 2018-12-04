@@ -80,7 +80,7 @@ class DataTableToMapConverterTest extends AbstractConverterTest {
                 row("30_000", "test2")
             )
         );
-        ParameterDescriptor parameterDescriptor = descriptorForMethodArgument(HaveOneMethod.class, "handleMap", 0);
+        ParameterDescriptor parameterDescriptor = descriptorForMethodArgument(HaveOneMethod.class, "handleMap");
 
         Value converted = converterUnderTest.convert(sourceSet, parameterDescriptor);
 
@@ -102,7 +102,7 @@ class DataTableToMapConverterTest extends AbstractConverterTest {
                 row("30_000", "test2")
             )
         );
-        ParameterDescriptor parameterDescriptor = descriptorForMethodArgument(HaveOneMethod.class, "handleMap", 0);
+        ParameterDescriptor parameterDescriptor = descriptorForMethodArgument(HaveOneMethod.class, "handleMap");
         Converter converterUnderTest = new DataTableToMapConverter();
 
         assertThatExceptionOfType(IllegalStateException.class)

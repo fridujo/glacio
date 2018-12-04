@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 
 import com.github.fridujo.glacio.running.api.convert.ParameterDescriptor;
 
@@ -14,11 +15,15 @@ public class ParameterDescriptors {
     }
 
     public static ParameterDescriptor descriptor(int position, Class<?> clazz) {
-        return new ParameterDescriptor(position, clazz, clazz, null);
+        return new ParameterDescriptor(position, clazz, clazz, Collections.emptyList(), null);
     }
 
     public static ParameterDescriptor descriptor(TypeReference typeReference) {
-        return new ParameterDescriptor(0, typeReference.rawType(), typeReference.type, null);
+        return new ParameterDescriptor(0, typeReference.rawType(), typeReference.type, Collections.emptyList(), null);
+    }
+
+    public static ParameterDescriptor descriptorForMethodArgument(Class<?> clazz, String methodName) {
+        return descriptorForMethodArgument(clazz, methodName, 0);
     }
 
     public static ParameterDescriptor descriptorForMethodArgument(Class<?> clazz, String methodName, int argumentPosition) {
@@ -31,6 +36,7 @@ public class ParameterDescriptors {
             argumentPosition,
             method.getParameterTypes()[argumentPosition],
             method.getGenericParameterTypes()[argumentPosition],
+            Arrays.asList(method.getParameterAnnotations()[argumentPosition]),
             method);
     }
 

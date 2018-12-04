@@ -32,7 +32,7 @@ class ParameterDescriptorTest {
 
     @Test
     void toString_displays_debug_information() {
-        ParameterDescriptor descriptor = descriptorForMethodArgument(Consumer.class, "accept", 0);
+        ParameterDescriptor descriptor = descriptorForMethodArgument(Consumer.class, "accept");
 
         assertThat(descriptor).hasToString("Parameter(position=0, type=class java.lang.Object) "
             + "of public abstract void java.util.function.Consumer.accept(java.lang.Object)");

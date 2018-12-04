@@ -1,8 +1,10 @@
 package com.github.fridujo.glacio.running.runtime.convert;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -72,7 +74,8 @@ public class MethodParameterConverter implements ParameterConverter {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         for (int i = 0; i < method.getParameterCount(); i++) {
-            parameterDescriptors.add(new ParameterDescriptor(i, parameterTypes[i], genericParameterTypes[i], method));
+            List<Annotation> annotations = Arrays.asList(method.getParameterAnnotations()[i]);
+            parameterDescriptors.add(new ParameterDescriptor(i, parameterTypes[i], genericParameterTypes[i], annotations, method));
         }
         return parameterDescriptors;
     }

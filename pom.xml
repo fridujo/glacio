@@ -25,6 +25,10 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-jar-plugin.version>2.1</maven-jar-plugin.version>
+
+        <pitest-junit5.version>0.8</pitest-junit5.version>
+        <pitest-maven-plugin.version>1.4.0</pitest-maven-plugin.version>
+        <descartes.version>1.2.4</descartes.version>
     </properties>
 
     <modules>
@@ -140,6 +144,26 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest-maven-plugin.version}</version>
+                    <configuration>
+                        <mutationEngine>descartes</mutationEngine>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest-junit5-plugin</artifactId>
+                            <version>${pitest-junit5.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>eu.stamp-project</groupId>
+                            <artifactId>descartes</artifactId>
+                            <version>${descartes.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

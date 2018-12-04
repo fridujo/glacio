@@ -30,12 +30,13 @@ class ResourceLoaderTest {
 
     @Test
     void loads_resources_from_jar_on_classpath() {
-        Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader()).resources("META-INF/services", ".TestEngine");
-        assertThat(files).hasSize(1);
+        Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader())
+            .resources("META-INF/maven/org.assertj/assertj-core", ".properties");
+        assertThat(files).isNotEmpty();
         Resource resource = files.iterator().next();
-        assertThat(resource.getAbsolutePath()).endsWith(".jar!/META-INF/services/org.junit.platform.engine.TestEngine");
-        assertThat(resource.getContent()).contains("org.junit.jupiter.engine.JupiterTestEngine");
-        assertThat(resource.getURI().toString()).endsWith("/org.junit.platform.engine.TestEngine");
-        assertThat(resource.getClassName("")).isEqualTo("META-INF.services.org.junit.platform.engine.TestEngine");
+        assertThat(resource.getAbsolutePath()).endsWith(".jar!/META-INF/maven/org.assertj/assertj-core/pom.properties");
+        assertThat(resource.getContent()).contains("groupId=org.assertj");
+        assertThat(resource.getURI().toString()).endsWith("/pom.properties");
+        assertThat(resource.getClassName("")).isEqualTo("META-INF.maven.org.assertj.assertj-core.pom.properties");
     }
 }

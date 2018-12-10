@@ -1,6 +1,6 @@
 package com.github.fridujo.glacio.running.runtime;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.fridujo.glacio.model.Example;
@@ -12,9 +12,13 @@ public class FeatureRunner {
     private final ExecutableLookup executableLookup;
     private final List<BeforeExampleEventAware> eventConsumers;
 
-    public FeatureRunner(ExecutableLookup executableLookup, BeforeExampleEventAware... eventConsumers) {
+    public FeatureRunner(ExecutableLookup executableLookup) {
         this.executableLookup = executableLookup;
-        this.eventConsumers = Arrays.asList(eventConsumers);
+        if (executableLookup instanceof BeforeExampleEventAware) {
+            this.eventConsumers = Collections.singletonList((BeforeExampleEventAware) executableLookup);
+        } else {
+            this.eventConsumers = Collections.emptyList();
+        }
     }
 
     public void runFeature(Feature feature) {

@@ -16,5 +16,12 @@
             <groupId>com.github.fridujo</groupId>
             <artifactId>glacio-parser</artifactId>
         </dependency>
+
+        <!-- Optional dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
     </dependencies>
 </project>

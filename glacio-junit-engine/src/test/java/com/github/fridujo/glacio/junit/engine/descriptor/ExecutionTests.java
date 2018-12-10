@@ -23,7 +23,6 @@ import org.opentest4j.AssertionFailedError;
 
 import com.github.fridujo.glacio.junit.engine.GlacioEngineExecutionContext;
 import com.github.fridujo.glacio.running.GlacioRunnerException;
-import com.github.fridujo.glacio.running.runtime.BeforeExampleEventAware;
 import com.github.fridujo.glacio.running.runtime.ExecutionResult;
 import com.github.fridujo.glacio.running.runtime.Status;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
@@ -41,11 +40,10 @@ class ExecutionTests {
     @MethodSource("lookup_exceptions")
     void failed_lookup(GlacioRunnerException lookupException) {
         Node<GlacioEngineExecutionContext> testDescriptor = new LeafStepDescriptor(uniqueId(), uniqueId(), step());
-        ExecutableLookup mock = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
-        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(
-            mock,
-            mock(BeforeExampleEventAware.class));
-        when(mock.lookup(any())).thenThrow(lookupException);
+        ExecutableLookup executableLookup = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
+        context.setExecutableLookup(executableLookup);
+        when(executableLookup.lookup(any())).thenThrow(lookupException);
 
         assertThatExceptionOfType(AssertionFailedError.class)
             .isThrownBy(() -> testDescriptor.execute(context, null))
@@ -55,12 +53,11 @@ class ExecutionTests {
     @Test
     void failed_execution() {
         Node<GlacioEngineExecutionContext> testDescriptor = new LeafStepDescriptor(uniqueId(), uniqueId(), step());
-        ExecutableLookup mock = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
-        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(
-            mock,
-            mock(BeforeExampleEventAware.class));
+        ExecutableLookup executableLookup = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
+        context.setExecutableLookup(executableLookup);
         String failedAssertionMessage = "a should be equal to b";
-        when(mock.lookup(any()).execute()).thenReturn(new ExecutionResult(Status.FAIL, failedAssertionMessage, new AssertionError(failedAssertionMessage)));
+        when(executableLookup.lookup(any()).execute()).thenReturn(new ExecutionResult(Status.FAIL, failedAssertionMessage, new AssertionError(failedAssertionMessage)));
 
         assertThatExceptionOfType(AssertionFailedError.class)
             .isThrownBy(() -> testDescriptor.execute(context, null))
@@ -70,23 +67,22 @@ class ExecutionTests {
     @Test
     void successful_execution() throws Exception {
         Node<GlacioEngineExecutionContext> testDescriptor = new LeafStepDescriptor(uniqueId(), uniqueId(), step());
-        ExecutableLookup mock = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
-        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(
-            mock,
-            mock(BeforeExampleEventAware.class));
-        when(mock.lookup(any()).execute()).thenReturn(new ExecutionResult(Status.SUCCESS));
+        ExecutableLookup executableLookup = mock(ExecutableLookup.class, RETURNS_DEEP_STUBS);
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
+        context.setExecutableLookup(executableLookup);
+        when(executableLookup.lookup(any()).execute()).thenReturn(new ExecutionResult(Status.SUCCESS));
 
         GlacioEngineExecutionContext resultingContext = testDescriptor.execute(context, null);
 
         assertThat(resultingContext).isSameAs(context);
-        verify(mock.lookup(any()), times(1)).execute();
+        verify(executableLookup.lookup(any()), times(1)).execute();
     }
 
     @Test
     void skip_execution_according_to_context() throws Exception {
         UniqueId exampleId = uniqueId();
         Node<GlacioEngineExecutionContext> testDescriptor = new LeafStepDescriptor(exampleId, uniqueId(), step());
-        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(null, null);
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
         assertThat(testDescriptor.shouldBeSkipped(context).isSkipped()).isFalse();
 
         context.registerFailure(exampleId, step());

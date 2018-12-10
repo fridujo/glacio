@@ -1,7 +1,9 @@
 package com.github.fridujo.glacio.running.runtime.glue;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
+
 class GlueFactoryTest {
 
-    private final GlueFactory glueFactory = new GlueFactory();
+    private final GlueFactory glueFactory = new GlueFactory(emptySet(), mock(ExtensionContext.class));
 
     static Stream<Arguments> valid_class_supplier() {
         return Stream.of(

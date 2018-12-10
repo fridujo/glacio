@@ -4,7 +4,6 @@ import static com.github.fridujo.glacio.junit.engine.ModelBuilder.example;
 import static com.github.fridujo.glacio.junit.engine.ModelBuilder.feature;
 import static com.github.fridujo.glacio.junit.engine.ModelBuilder.step;
 import static com.github.fridujo.glacio.junit.engine.ModelBuilder.uniqueId;
-import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -20,14 +19,18 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
 import com.github.fridujo.glacio.junit.engine.GlacioEngineExecutionContext;
+import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.runtime.BeforeExampleEventAware;
+import com.github.fridujo.glacio.running.runtime.glue.AmbiguousStepDefinitionsException;
+import com.github.fridujo.glacio.running.runtime.glue.Executable;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
+import com.github.fridujo.glacio.running.runtime.glue.MissingStepImplementationException;
 
 class DescriptorsTests {
 
     static List<TestDescriptor> containerDescriptors() {
         return Arrays.asList(
-            new GlacioEngineDescriptor(uniqueId(), emptySet()),
+            new GlacioEngineDescriptor(uniqueId()),
             new FeatureDescriptor(uniqueId(), feature()),
             new ExampleDescriptor(uniqueId(), example()),
             new StepContainerDescriptor(uniqueId(), uniqueId(), step())
@@ -56,22 +59,19 @@ class DescriptorsTests {
     @Test
     void exampleDescriptor_invoke_beforeExampleEventAware_before_execution() {
         ExampleDescriptor exampleDescriptor = new ExampleDescriptor(uniqueId(), example());
-        BeforeExampleEventAware beforeExampleEventAware = mock(BeforeExampleEventAware.class);
-        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(
-            mock(ExecutableLookup.class),
-            beforeExampleEventAware);
+        TestExecutableLookup executableLookup = new TestExecutableLookup();
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
+        context.setExecutableLookup(executableLookup);
 
         exampleDescriptor.prepare(context);
 
-        verify(beforeExampleEventAware, times(1)).beforeExample();
+        verify(executableLookup.beforeExampleEventAware, times(1)).beforeExample();
     }
 
     @Test
     void exampleDescriptor_invoke_cleanup_after_execution() {
         ExampleDescriptor exampleDescriptor = new ExampleDescriptor(uniqueId(), example());
         GlacioEngineExecutionContext context = new GlacioEngineExecutionContext(
-            mock(ExecutableLookup.class),
-            mock(BeforeExampleEventAware.class)
         );
         UniqueId exampleId = exampleDescriptor.getUniqueId();
         context.registerFailure(exampleId, step());
@@ -81,5 +81,20 @@ class DescriptorsTests {
 
         assertThat(context.shouldBeSkipped(exampleId).isSkipped()).isFalse();
 
+    }
+
+    private static final class TestExecutableLookup implements ExecutableLookup, BeforeExampleEventAware {
+
+        private final BeforeExampleEventAware beforeExampleEventAware = mock(BeforeExampleEventAware.class);
+
+        @Override
+        public void beforeExample() {
+            beforeExampleEventAware.beforeExample();
+        }
+
+        @Override
+        public Executable lookup(Step step) throws MissingStepImplementationException, AmbiguousStepDefinitionsException {
+            return null;
+        }
     }
 }

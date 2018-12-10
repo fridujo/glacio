@@ -1,6 +1,7 @@
 package com.github.fridujo.glacio.junit.engine;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.platform.engine.UniqueId;
@@ -9,25 +10,30 @@ import org.junit.platform.engine.support.hierarchical.Node;
 
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.runtime.BeforeExampleEventAware;
+import com.github.fridujo.glacio.running.runtime.GlacioRunnerInitializationException;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
 
 public class GlacioEngineExecutionContext implements EngineExecutionContext {
 
-    private final ExecutableLookup executableLookup;
-    private final BeforeExampleEventAware beforeExampleEventAware;
     private final Map<UniqueId, Step> firstFailedStepByExampleId = new ConcurrentHashMap<>();
-
-    public GlacioEngineExecutionContext(ExecutableLookup executableLookup, BeforeExampleEventAware beforeExampleEventAware) {
-        this.executableLookup = executableLookup;
-        this.beforeExampleEventAware = beforeExampleEventAware;
-    }
+    private ExecutableLookup executableLookup;
+    private Optional<BeforeExampleEventAware> beforeExampleEventAware;
 
     public ExecutableLookup getExecutableLookup() {
+        if (executableLookup == null) {
+            throw new GlacioRunnerInitializationException("No " + ExecutableLookup.class.getSimpleName() + " supplied");
+        }
         return executableLookup;
     }
 
-    public BeforeExampleEventAware getBeforeExampleEventAware() {
-        return beforeExampleEventAware;
+    public GlacioEngineExecutionContext setExecutableLookup(ExecutableLookup executableLookup) {
+        this.executableLookup = executableLookup;
+        if (executableLookup instanceof BeforeExampleEventAware) {
+            beforeExampleEventAware = Optional.of((BeforeExampleEventAware) executableLookup);
+        } else {
+            beforeExampleEventAware = Optional.empty();
+        }
+        return this;
     }
 
     public void registerFailure(UniqueId exampleId, Step step) {
@@ -43,6 +49,10 @@ public class GlacioEngineExecutionContext implements EngineExecutionContext {
             skipResult = Node.SkipResult.doNotSkip();
         }
         return skipResult;
+    }
+
+    public void notifyBeforeExample() {
+        beforeExampleEventAware.ifPresent(BeforeExampleEventAware::beforeExample);
     }
 
     public void cleanUpExample(UniqueId exampleId) {

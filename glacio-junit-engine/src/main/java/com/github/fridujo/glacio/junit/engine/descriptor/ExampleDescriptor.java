@@ -38,7 +38,7 @@ public class ExampleDescriptor extends AbstractGlacioTestDescriptor {
 
     @Override
     public GlacioEngineExecutionContext prepare(GlacioEngineExecutionContext context) {
-        context.getBeforeExampleEventAware().beforeExample();
+        context.notifyBeforeExample();
         return context;
     }
 

@@ -54,7 +54,7 @@ public class ParameterDescriptor {
 
     private <T extends Annotation> T getAnnotation(Class<T> annotationClass, List<Annotation> annotationList, Set<Annotation> visited) {
         for (Annotation annotation : annotationList) {
-            if(visited.contains(annotation)) {
+            if (visited.contains(annotation)) {
                 continue;
             }
             visited.add(annotation);
@@ -62,7 +62,7 @@ public class ParameterDescriptor {
                 return (T) annotation;
             }
             Annotation inHierarchy = getAnnotation(annotationClass, Arrays.asList(annotation.annotationType().getAnnotations()), visited);
-            if(inHierarchy != null) {
+            if (inHierarchy != null) {
                 return (T) inHierarchy;
             }
         }

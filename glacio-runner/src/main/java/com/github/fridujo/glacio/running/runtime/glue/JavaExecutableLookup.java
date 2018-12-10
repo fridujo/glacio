@@ -15,21 +15,30 @@ import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.api.Given;
 import com.github.fridujo.glacio.running.api.Then;
 import com.github.fridujo.glacio.running.api.When;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
+import com.github.fridujo.glacio.running.api.extension.ParameterResolver;
+import com.github.fridujo.glacio.running.runtime.BeforeExampleEventAware;
 import com.github.fridujo.glacio.running.runtime.convert.MethodParameterConverter;
 import com.github.fridujo.glacio.running.runtime.io.ClassFinder;
 import com.github.fridujo.glacio.running.runtime.io.MultiLoader;
 import com.github.fridujo.glacio.running.runtime.io.ResourceLoaderClassFinder;
 
-public class JavaExecutableLookup implements ExecutableLookup {
+public class JavaExecutableLookup implements ExecutableLookup, BeforeExampleEventAware {
 
+    /**
+     * Visible for test.
+     */
+    final GlueFactory glueFactory;
     private final Map<Pattern, Method> methodsByPattern;
-    private final GlueFactory glueFactory;
     private final MethodParameterConverter methodParameterConverter = new MethodParameterConverter();
 
-    public JavaExecutableLookup(ClassLoader classLoader, Set<String> gluePaths, GlueFactory glueFactory) {
-        this.glueFactory = glueFactory;
-        ClassFinder classFinder = new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
+    public JavaExecutableLookup(ClassLoader classLoader,
+                                Set<String> gluePaths,
+                                Set<ParameterResolver> parameterResolvers,
+                                ExtensionContext extensionContext) {
+        glueFactory = new GlueFactory(parameterResolvers, extensionContext);
 
+        ClassFinder classFinder = new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
         methodsByPattern = gluePaths
             .stream()
             .flatMap(gluePath -> classFinder.getDescendants(Object.class, gluePath).stream())
@@ -78,5 +87,10 @@ public class JavaExecutableLookup implements ExecutableLookup {
             Method method = match.getValue();
             return new JavaExecutable(glueFactory, methodParameterConverter, step, match.getKey(), method);
         }
+    }
+
+    @Override
+    public void beforeExample() {
+        glueFactory.beforeExample();
     }
 }

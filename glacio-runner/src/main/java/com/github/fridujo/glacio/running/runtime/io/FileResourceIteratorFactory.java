@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 /**
  * Factory which creates {@link FileResourceIterator}s.
- * <p/>
+ * <br>
  * <p>{@link FileResourceIterator}s should be created for any cases where a
  * URL's protocol isn't otherwise handled. Thus, {@link #isFactoryFor(URL)}
  * will always return <code>true</code>. Because of this behavior, the

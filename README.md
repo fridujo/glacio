@@ -124,3 +124,77 @@ the user signs in
 the user is logged in
     * Relative URL is '/home'
 ```
+
+
+## Getting Started
+
+### Maven
+Add the following dependency to your **pom.xml**
+```xml
+<dependency>
+    <groupId>com.github.fridujo</groupId>
+    <artifactId>glacio-junit-engine</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### Gradle
+Add the following dependency to your **build.gradle**
+```groovy
+repositories {
+	mavenCentral()
+}
+
+// ...
+
+dependencies {
+	// ...
+	testCompile('com.github.fridujo:glacio-junit-engine:1.0.0-SNAPSHOT')
+	// ...
+}
+```
+
+### Building from Source
+
+You need [JDK-8](http://jdk.java.net/8/) to build Glacio. The project can be built with Maven using the following command.
+```
+mvn clean package
+```
+
+Tests are split in:
+
+* **unit tests** covering features and borderline cases: `mvn test`
+* **mutation tests**, to help understand what is missing in test assertions: `mvn org.pitest:pitest-maven:mutationCoverage`
+
+
+### Installing in the Local Maven Repository
+
+The project can be installed in a local Maven Repository for usage in other projects via the following command.
+```
+mvn clean install
+```
+
+### Using the latest SNAPSHOT
+
+The master of the project pushes SNAPSHOTs in Sonatype's repo.
+
+To use the latest master build add Sonatype OSS snapshot repository, for Maven:
+```
+<repositories>
+    ...
+    <repository>
+        <id>sonatype-oss-spanshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+```
+
+For Gradle:
+```groovy
+repositories {
+    // ...
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}

@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Similar to {@link java.util.Optional} except a {@code null} value can be present.<br/>
+ * Similar to {@link java.util.Optional} except a {@code null} value can be present.<br>
  * <p>
  * This way a {@link Converter} is able to return either:
  * <ul>

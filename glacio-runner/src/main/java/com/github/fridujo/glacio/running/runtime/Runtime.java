@@ -26,7 +26,9 @@ public class Runtime {
             ExtensionContext extensionContext = new ExtensionContextImpl(configurationContext.getConfigurationClass());
             JavaExecutableLookup executableLookup = new JavaExecutableLookup(
                 classLoader,
-                configurationContext.getGluePaths());
+                configurationContext.getGluePaths(),
+                configurationContext.getParameterResolvers(),
+                extensionContext);
             configurationContext.enrichWith(executableLookup);
 
             Set<Feature> features = featureLoader.load(configurationContext.getFeaturePaths());

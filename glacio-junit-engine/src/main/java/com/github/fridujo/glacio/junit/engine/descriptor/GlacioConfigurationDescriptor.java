@@ -45,7 +45,9 @@ public class GlacioConfigurationDescriptor extends AbstractGlacioTestDescriptor 
     public GlacioEngineExecutionContext prepare(GlacioEngineExecutionContext context) {
         ExecutableLookup executableLookup = new JavaExecutableLookup(
             configurationContext.getClassLoader(),
-            configurationContext.getGluePaths());
+            configurationContext.getGluePaths(),
+            configurationContext.getParameterResolvers(),
+            extensionContext);
 
         return context.initializeConfiguration(getUniqueId(), executableLookup, configurationContext, extensionContext);
     }

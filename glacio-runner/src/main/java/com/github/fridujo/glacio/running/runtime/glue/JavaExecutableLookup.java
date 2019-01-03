@@ -17,6 +17,7 @@ import com.github.fridujo.glacio.running.api.Then;
 import com.github.fridujo.glacio.running.api.When;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
+import com.github.fridujo.glacio.running.api.extension.ParameterResolver;
 import com.github.fridujo.glacio.running.runtime.convert.MethodParameterConverter;
 import com.github.fridujo.glacio.running.runtime.io.ClassFinder;
 import com.github.fridujo.glacio.running.runtime.io.MultiLoader;
@@ -32,8 +33,10 @@ public class JavaExecutableLookup implements ExecutableLookup, BeforeExampleCall
     private final MethodParameterConverter methodParameterConverter = new MethodParameterConverter();
 
     public JavaExecutableLookup(ClassLoader classLoader,
-                                Set<String> gluePaths) {
-        glueFactory = new GlueFactory();
+                                Set<String> gluePaths,
+                                Set<ParameterResolver> parameterResolvers,
+                                ExtensionContext extensionContext) {
+        glueFactory = new GlueFactory(parameterResolvers, extensionContext);
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
         methodsByPattern = gluePaths

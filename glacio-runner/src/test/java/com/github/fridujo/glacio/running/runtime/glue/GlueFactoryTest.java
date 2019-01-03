@@ -1,7 +1,13 @@
 package com.github.fridujo.glacio.running.runtime.glue;
 
+import static com.github.fridujo.glacio.running.runtime.glue.TestParameterResolver.atPosition;
+import static com.github.fridujo.glacio.running.runtime.glue.TestParameterResolver.forType;
+import static com.github.fridujo.glacio.running.runtime.glue.TestParameterResolver.noMatch;
+import static com.github.fridujo.glacio.running.runtime.glue.TestParameterResolver.set;
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -14,10 +20,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.github.fridujo.glacio.running.GlacioRunnerException;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 
 class GlueFactoryTest {
 
-    private final GlueFactory glueFactory = new GlueFactory();
+    private final GlueFactory glueFactory = new GlueFactory(singleton(noMatch()),
+        mock(ExtensionContext.class));
 
     static Stream<Arguments> valid_class_supplier() {
         return Stream.of(
@@ -27,7 +35,6 @@ class GlueFactoryTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void before_reset_object_cache() {
         List<Object> list = (List<Object>) glueFactory.getGlue(ArrayList.class);
         list.add(new Object());
@@ -48,16 +55,17 @@ class GlueFactoryTest {
 
     @Test
     void cannot_build_a_class_with_no_parameter_resolver_matching() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .as("class with a parameter")
+        assertThatExceptionOfType(GlacioRunnerException.class)
+            .as("class with private constructor")
             .isThrownBy(() -> glueFactory.getGlue(TestGlueWithParameter.class))
-            .withMessage("wrong number of arguments");
+            .withMessage("Cannot create instance of class " + TestGlueWithParameter.class.getSimpleName() +
+                ": No ParameterResolver matches parameter GlueFactoryTest$TestGlueWithParameter([0] String param)");
     }
 
     @Test
     void cannot_build_a_class_with_multiple_constructors() {
         assertThatExceptionOfType(GlacioRunnerException.class)
-            .as("class with multiple constructors")
+            .as("class with private constructor")
             .isThrownBy(() -> glueFactory.getGlue(MultiConstructorGlue.class))
             .withMessage("Cannot create instance of class " + MultiConstructorGlue.class.getSimpleName() +
                 ": must have only one constructor, or a default one");
@@ -76,6 +84,22 @@ class GlueFactoryTest {
     @MethodSource("valid_class_supplier")
     void can_build_any_class_having_a_constructor_without_parameters(Class<?> clazz) {
         assertThat(glueFactory.getGlue(clazz)).isNotNull();
+    }
+
+    @Test
+    void can_build_a_class_with_matching_parameter_resolver_by_type() {
+        GlueFactory glueFactory = new GlueFactory(set(noMatch(), forType("test")), mock(ExtensionContext.class));
+        TestGlueWithParameter glue = glueFactory.getGlue(TestGlueWithParameter.class);
+
+        assertThat(glue.param).isEqualTo("test");
+    }
+
+    @Test
+    void can_build_a_class_with_matching_parameter_resolver_by_position() {
+        GlueFactory glueFactory = new GlueFactory(set(noMatch(), atPosition(0, "test2")), mock(ExtensionContext.class));
+        TestGlueWithParameter glue = glueFactory.getGlue(TestGlueWithParameter.class);
+
+        assertThat(glue.param).isEqualTo("test2");
     }
 
     static final class TestGlue {

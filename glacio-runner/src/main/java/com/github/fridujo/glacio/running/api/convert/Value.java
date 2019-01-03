@@ -44,6 +44,7 @@ public class Value {
         return filter(v -> clazz.equals(v.clazz));
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Value filterValue(Predicate<T> valuePredicate) {
         return filter(v -> valuePredicate.test((T) v.value));
     }
@@ -66,6 +67,7 @@ public class Value {
         return mapPresent(transformation, ABSENT);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Value mapPresent(Function<T, ?> transformation, Value defaultValue) {
         final Value value;
         if (present) {

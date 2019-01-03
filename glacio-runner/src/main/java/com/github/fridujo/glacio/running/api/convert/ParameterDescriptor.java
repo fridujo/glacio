@@ -52,18 +52,19 @@ public class ParameterDescriptor {
         return getAnnotation(annotationClass, annotations, visited);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends Annotation> T getAnnotation(Class<T> annotationClass, List<Annotation> annotationList, Set<Annotation> visited) {
         for (Annotation annotation : annotationList) {
-            if(visited.contains(annotation)) {
+            if (visited.contains(annotation)) {
                 continue;
             }
             visited.add(annotation);
             if (annotation.annotationType().equals(annotationClass)) {
                 return (T) annotation;
             }
-            Annotation inHierarchy = getAnnotation(annotationClass, Arrays.asList(annotation.annotationType().getAnnotations()), visited);
-            if(inHierarchy != null) {
-                return (T) inHierarchy;
+            T inHierarchy = getAnnotation(annotationClass, Arrays.asList(annotation.annotationType().getAnnotations()), visited);
+            if (inHierarchy != null) {
+                return inHierarchy;
             }
         }
         return null;

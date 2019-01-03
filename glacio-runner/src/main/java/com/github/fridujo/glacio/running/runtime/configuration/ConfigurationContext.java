@@ -2,7 +2,11 @@ package com.github.fridujo.glacio.running.runtime.configuration;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
+import com.github.fridujo.glacio.running.api.extension.Extension;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.logging.Logger;
 import com.github.fridujo.glacio.running.logging.LoggerFactory;
 
@@ -12,13 +16,23 @@ public class ConfigurationContext {
     private final Class<?> configurationClass;
     private final Set<String> gluePaths;
     private final Set<String> featurePaths;
+    private final Set<BeforeExampleCallback> beforeExampleCallbacks;
 
     public ConfigurationContext(Class<?> configurationClass,
                                 Set<String> gluePaths,
-                                Set<String> featurePaths) {
+                                Set<String> featurePaths,
+                                Set<Extension> extensions) {
         this.configurationClass = configurationClass;
         this.gluePaths = gluePaths;
         this.featurePaths = featurePaths;
+        beforeExampleCallbacks = extractSpecificExtensions(extensions, BeforeExampleCallback.class);
+    }
+
+    private <T extends Extension> Set<T> extractSpecificExtensions(Set<Extension> extensions, Class<T> extensionClass) {
+        return extensions.stream()
+            .filter(e -> extensionClass.isAssignableFrom(e.getClass()))
+            .map(extensionClass::cast)
+            .collect(Collectors.toSet());
     }
 
     public Class<?> getConfigurationClass() {
@@ -33,6 +47,16 @@ public class ConfigurationContext {
         return featurePaths;
     }
 
+    public void beforeExample(ExtensionContext extensionContext) {
+        beforeExampleCallbacks.forEach(bac -> {
+            try {
+                bac.beforeExample(extensionContext);
+            } catch (Exception e) {
+                logger.warn("Exception occurred in " + BeforeExampleCallback.class.getSimpleName() + " (" + bac.getClass() + ")" + ": " + e.getMessage(), e);
+            }
+        });
+    }
+
     public String name() {
         return Optional.ofNullable(configurationClass)
             .map(Class::getSimpleName)
@@ -43,5 +67,9 @@ public class ConfigurationContext {
         return Optional.ofNullable(configurationClass)
             .map(Class::getClassLoader)
             .orElse(Thread.currentThread().getContextClassLoader());
+    }
+
+    public void enrichWith(BeforeExampleCallback beforeExampleCallback) {
+        beforeExampleCallbacks.add(beforeExampleCallback);
     }
 }

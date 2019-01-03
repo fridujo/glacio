@@ -74,4 +74,17 @@ class DescriptorsTests {
 
         assertThat(context.getExecutableLookup(glacioConfigurationDescriptor.getUniqueId())).isNotNull();
     }
+
+    @Test
+    void exampleDescriptor_notify_beforeExample_before_execution() {
+        ModelBuilder.TestConfigurationContext configurationContext = testConfigurationContext();
+        GlacioConfigurationDescriptor glacioConfigurationDescriptor = new GlacioConfigurationDescriptor(uniqueId(), configurationContext.configurationContext());
+        GlacioEngineExecutionContext context = new GlacioEngineExecutionContext();
+        glacioConfigurationDescriptor.prepare(context);
+        ExampleDescriptor exampleDescriptor = new ExampleDescriptor(glacioConfigurationDescriptor.getUniqueId(), uniqueId(), example());
+
+        exampleDescriptor.prepare(context);
+
+        assertThat(configurationContext.getExtension().beforeExampleCounter).hasValue(1);
+    }
 }

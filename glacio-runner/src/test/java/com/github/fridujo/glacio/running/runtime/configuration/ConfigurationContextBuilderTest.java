@@ -6,12 +6,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Set;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
 import com.github.fridujo.glacio.running.api.configuration.GlacioConfiguration;
+import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
+import com.github.fridujo.glacio.running.api.extension.ExtendGlacioWith;
+import com.github.fridujo.glacio.running.api.extension.Extension;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.GlacioRunnerInitializationException;
 import com.github.fridujo.glacio.running.runtime.RuntimeOptions;
+import com.github.fridujo.glacio.running.runtime.extension.ExtensionContextImpl;
 
 class ConfigurationContextBuilderTest {
 
@@ -43,6 +49,10 @@ class ConfigurationContextBuilderTest {
         assertThat(defaultConfigurationContext.getConfigurationClass()).isEqualTo(TestConfiguration.class);
         assertThat(defaultConfigurationContext.getFeaturePaths()).containsExactly("features-c");
         assertThat(defaultConfigurationContext.getGluePaths()).containsExactly("glues-c");
+
+        ExtensionContextImpl extensionContext = new ExtensionContextImpl(TestConfiguration.class);
+        defaultConfigurationContext.beforeExample(extensionContext);
+        assertThat(extensionContext.getStore("test").<String>get("beforeExample")).isEqualTo("beforeExample");
     }
 
     @Test
@@ -54,7 +64,30 @@ class ConfigurationContextBuilderTest {
             .withMessageContaining("Given configuration class[String] must be annotated with @GlacioConfiguration");
     }
 
+    @Test
+    void with_not_instantiable_extension() {
+        RuntimeOptions runtimeOptions = new RuntimeOptions(singleton("features"), singleton("glues"), singleton(TestConfigurationWithNotInstantiableExtension.class));
+
+        assertThatExceptionOfType(GlacioRunnerInitializationException.class)
+            .isThrownBy(() -> new ConfigurationContextBuilder().fromRuntimeOptions(runtimeOptions))
+            .withMessageContaining("Cannot instantiate Extension class com.github.fridujo.glacio.running.api.extension.Extension");
+    }
+
     @GlacioConfiguration(featurePaths = "features-c", gluePaths = "glues-c")
+    @ExtendGlacioWith(TestBeforeExample.class)
     private static final class TestConfiguration {
+    }
+
+    @GlacioConfiguration
+    @ExtendGlacioWith(Extension.class)
+    private static final class TestConfigurationWithNotInstantiableExtension {
+    }
+
+    public static final class TestBeforeExample implements BeforeExampleCallback {
+
+        @Override
+        public void beforeExample(ExtensionContext context) {
+            context.getStore("test").getOrComputeIfAbsent("beforeExample", Function.identity(), String.class);
+        }
     }
 }

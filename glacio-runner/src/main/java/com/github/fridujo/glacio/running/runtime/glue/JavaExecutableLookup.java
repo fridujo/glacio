@@ -15,12 +15,14 @@ import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.api.Given;
 import com.github.fridujo.glacio.running.api.Then;
 import com.github.fridujo.glacio.running.api.When;
+import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.convert.MethodParameterConverter;
 import com.github.fridujo.glacio.running.runtime.io.ClassFinder;
 import com.github.fridujo.glacio.running.runtime.io.MultiLoader;
 import com.github.fridujo.glacio.running.runtime.io.ResourceLoaderClassFinder;
 
-public class JavaExecutableLookup implements ExecutableLookup {
+public class JavaExecutableLookup implements ExecutableLookup, BeforeExampleCallback {
 
     /**
      * Visible for test.
@@ -82,5 +84,10 @@ public class JavaExecutableLookup implements ExecutableLookup {
             Method method = match.getValue();
             return new JavaExecutable(glueFactory, methodParameterConverter, step, match.getKey(), method);
         }
+    }
+
+    @Override
+    public void beforeExample(ExtensionContext context) {
+        glueFactory.reset();
     }
 }

@@ -69,6 +69,6 @@ class DiscoveryTests {
     }
 
     @GlacioConfiguration(featurePaths = "classpath:features/exec")
-    public static class TestInitializer {
+    private static class TestInitializer {
     }
 }

@@ -5,17 +5,21 @@ import java.util.List;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
 import com.github.fridujo.glacio.model.Step;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.configuration.ConfigurationContext;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
 
 public class FeatureRunner {
     private final ExecutableLookup executableLookup;
     private final ConfigurationContext configurationContext;
+    private final ExtensionContext extensionContext;
 
     public FeatureRunner(ExecutableLookup executableLookup,
-                         ConfigurationContext configurationContext) {
+                         ConfigurationContext configurationContext,
+                         ExtensionContext extensionContext) {
         this.executableLookup = executableLookup;
         this.configurationContext = configurationContext;
+        this.extensionContext = extensionContext;
     }
 
     public void runFeature(Feature feature) {
@@ -26,6 +30,7 @@ public class FeatureRunner {
     }
 
     private void runExample(Example example) {
+        configurationContext.beforeExample(extensionContext);
         runSteps(1, example.getSteps());
     }
 

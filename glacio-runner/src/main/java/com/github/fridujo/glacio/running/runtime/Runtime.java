@@ -3,7 +3,9 @@ package com.github.fridujo.glacio.running.runtime;
 import java.util.Set;
 
 import com.github.fridujo.glacio.model.Feature;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.configuration.ConfigurationContext;
+import com.github.fridujo.glacio.running.runtime.extension.ExtensionContextImpl;
 import com.github.fridujo.glacio.running.runtime.feature.FeatureLoader;
 import com.github.fridujo.glacio.running.runtime.feature.FileFeatureLoader;
 import com.github.fridujo.glacio.running.runtime.glue.JavaExecutableLookup;
@@ -21,12 +23,14 @@ public class Runtime {
         for (ConfigurationContext configurationContext : configurationContexts) {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             FeatureLoader featureLoader = new FileFeatureLoader(new MultiLoader(classLoader));
+            ExtensionContext extensionContext = new ExtensionContextImpl(configurationContext.getConfigurationClass());
             JavaExecutableLookup executableLookup = new JavaExecutableLookup(
                 classLoader,
                 configurationContext.getGluePaths());
+            configurationContext.enrichWith(executableLookup);
 
             Set<Feature> features = featureLoader.load(configurationContext.getFeaturePaths());
-            FeatureRunner featureRunner = new FeatureRunner(executableLookup, configurationContext);
+            FeatureRunner featureRunner = new FeatureRunner(executableLookup, configurationContext, extensionContext);
             features.forEach(featureRunner::runFeature);
         }
     }

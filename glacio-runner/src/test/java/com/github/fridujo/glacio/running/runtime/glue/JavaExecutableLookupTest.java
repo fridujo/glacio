@@ -1,7 +1,9 @@
 package com.github.fridujo.glacio.running.runtime.glue;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import org.opentest4j.AssertionFailedError;
 
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Step;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.ExecutionResult;
 import com.github.fridujo.glacio.running.runtime.Status;
 import com.github.fridujo.glacio.sample.TestStepDef;
@@ -22,7 +25,8 @@ class JavaExecutableLookupTest {
     void lookup_of_existing_given_methods() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("a user named Aldoux");
 
         Executable lookup = executableLookup.lookup(step);
@@ -40,7 +44,8 @@ class JavaExecutableLookupTest {
     void lookup_of_existing_when_methods() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("the user clicks on the button");
         TestStepDef glue = executableLookup.glueFactory.getGlue(TestStepDef.class);
 
@@ -56,7 +61,8 @@ class JavaExecutableLookupTest {
     void execution_with_failed_assertion() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("the button have been clicked on");
 
         Executable lookup = executableLookup.lookup(step);
@@ -76,7 +82,8 @@ class JavaExecutableLookupTest {
     void execution_with_failed_access() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("package protected method");
 
         Executable lookup = executableLookup.lookup(step);
@@ -94,7 +101,8 @@ class JavaExecutableLookupTest {
     void lookup_missing_method() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("no match (test)");
 
         assertThatExceptionOfType(MissingStepImplementationException.class)
@@ -106,7 +114,8 @@ class JavaExecutableLookupTest {
     void lookup_with_multiple_matching_method() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        ExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = stepWithText("a user with data test");
 
         assertThatExceptionOfType(AmbiguousStepDefinitionsException.class)
@@ -120,7 +129,8 @@ class JavaExecutableLookupTest {
     void execution_with_argument_parameter() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> gluePaths = Collections.singleton("com.github.fridujo.glacio.sample");
-        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths);
+        ExtensionContext extensionContext = mock(ExtensionContext.class);
+        JavaExecutableLookup executableLookup = new JavaExecutableLookup(classLoader, gluePaths, emptySet(), extensionContext);
         Step step = new Step(
             false,
             Optional.empty(),

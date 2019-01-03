@@ -9,6 +9,7 @@ import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallba
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.Extension;
 import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
+import com.github.fridujo.glacio.running.api.extension.ParameterResolver;
 import com.github.fridujo.glacio.running.logging.Logger;
 import com.github.fridujo.glacio.running.logging.LoggerFactory;
 
@@ -18,6 +19,7 @@ public class ConfigurationContext {
     private final Class<?> configurationClass;
     private final Set<String> gluePaths;
     private final Set<String> featurePaths;
+    private final Set<ParameterResolver> parameterResolvers;
     private final Set<BeforeConfigurationCallback> beforeConfigurationCallbacks;
     private final Set<BeforeExampleCallback> beforeExampleCallbacks;
     private final Set<AfterConfigurationCallback> afterConfigurationCallbacks;
@@ -29,6 +31,7 @@ public class ConfigurationContext {
         this.configurationClass = configurationClass;
         this.gluePaths = gluePaths;
         this.featurePaths = featurePaths;
+        parameterResolvers = extractSpecificExtensions(extensions, ParameterResolver.class);
         beforeConfigurationCallbacks = extractSpecificExtensions(extensions, BeforeConfigurationCallback.class);
         beforeExampleCallbacks = extractSpecificExtensions(extensions, BeforeExampleCallback.class);
         afterConfigurationCallbacks = extractSpecificExtensions(extensions, AfterConfigurationCallback.class);
@@ -51,6 +54,10 @@ public class ConfigurationContext {
 
     public Set<String> getFeaturePaths() {
         return featurePaths;
+    }
+
+    public Set<ParameterResolver> getParameterResolvers() {
+        return parameterResolvers;
     }
 
     public void beforeConfiguration(ExtensionContext extensionContext) {

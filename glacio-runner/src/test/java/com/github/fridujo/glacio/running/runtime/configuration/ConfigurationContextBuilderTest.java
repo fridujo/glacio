@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import com.github.fridujo.glacio.running.api.configuration.GlacioConfiguration;
+import com.github.fridujo.glacio.running.api.extension.AfterConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.ExtendGlacioWith;
@@ -58,6 +59,9 @@ class ConfigurationContextBuilderTest {
 
         defaultConfigurationContext.beforeExample(extensionContext);
         assertThat(extensionContext.getStore("test").<String>get("beforeExample")).isEqualTo("beforeExample");
+
+        defaultConfigurationContext.afterConfiguration(extensionContext);
+        assertThat(extensionContext.getStore("test").<String>get("afterConfiguration")).isEqualTo("afterConfiguration");
     }
 
     @Test
@@ -79,7 +83,8 @@ class ConfigurationContextBuilderTest {
     }
 
     @GlacioConfiguration(featurePaths = "features-c", gluePaths = "glues-c")
-    @ExtendGlacioWith(TestBeforeExample.class)
+    @ExtendGlacioWith(TestBeforeExtension.class)
+    @ExtendGlacioWith(TestAfterExtension.class)
     private static final class TestConfiguration {
     }
 
@@ -88,7 +93,7 @@ class ConfigurationContextBuilderTest {
     private static final class TestConfigurationWithNotInstantiableExtension {
     }
 
-    public static final class TestBeforeExample implements BeforeConfigurationCallback, BeforeExampleCallback {
+    public static final class TestBeforeExtension implements BeforeConfigurationCallback, BeforeExampleCallback {
 
         @Override
         public void beforeExample(ExtensionContext context) {
@@ -100,4 +105,14 @@ class ConfigurationContextBuilderTest {
             context.getStore("test").getOrComputeIfAbsent("beforeConfiguration", Function.identity(), String.class);
         }
     }
+
+    public static final class TestAfterExtension implements AfterConfigurationCallback {
+
+        @Override
+        public void afterConfiguration(ExtensionContext context) {
+            context.getStore("test").getOrComputeIfAbsent("afterConfiguration", Function.identity(), String.class);
+        }
+    }
+
+
 }

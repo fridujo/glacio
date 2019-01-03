@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.fridujo.glacio.running.api.extension.AfterConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
@@ -29,6 +30,16 @@ class ConfigurationContextTest {
         ConfigurationContext configurationContext = new ConfigurationContext(String.class, emptySet(), emptySet(), singleton(beforeExampleCallback));
 
         configurationContext.beforeExample(mock(ExtensionContext.class));
+
+        assertThat(true).as("no exception thrown").isTrue();
+    }
+
+    @Test
+    void exception_in_after_all_configuration_is_not_propagated() {
+        AfterConfigurationCallback afterAllCallback = c -> {throw new IllegalStateException();};
+        ConfigurationContext configurationContext = new ConfigurationContext(String.class, emptySet(), emptySet(), singleton(afterAllCallback));
+
+        configurationContext.afterConfiguration(mock(ExtensionContext.class));
 
         assertThat(true).as("no exception thrown").isTrue();
     }

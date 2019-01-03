@@ -76,6 +76,16 @@ class DescriptorsTests {
     }
 
     @Test
+    void configurationDescriptor_invoke_before_callbacks_before_execution() {
+        ModelBuilder.TestConfigurationContext configurationContext = testConfigurationContext();
+        GlacioConfigurationDescriptor glacioConfigurationDescriptor = new GlacioConfigurationDescriptor(uniqueId(), configurationContext.configurationContext());
+
+        glacioConfigurationDescriptor.before(new GlacioEngineExecutionContext());
+
+        assertThat(configurationContext.getExtension().beforeConfigurationCounter).hasValue(1);
+    }
+
+    @Test
     void exampleDescriptor_notify_beforeExample_before_execution() {
         ModelBuilder.TestConfigurationContext configurationContext = testConfigurationContext();
         GlacioConfigurationDescriptor glacioConfigurationDescriptor = new GlacioConfigurationDescriptor(uniqueId(), configurationContext.configurationContext());

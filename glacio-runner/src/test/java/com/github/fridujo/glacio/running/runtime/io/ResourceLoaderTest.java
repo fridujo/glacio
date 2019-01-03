@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,12 @@ class ResourceLoaderTest {
     private final File dir;
 
     ResourceLoaderTest() throws UnsupportedEncodingException {
-        dir = new File(URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getFile(), "UTF-8"));
+        dir = new File(URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getFile(), StandardCharsets.UTF_8.name()));
     }
 
     @Test
     void loads_resources_from_filesystem_dir() {
-        Iterable<Resource> files = new FileResourceLoader().resources(dir.getAbsolutePath(), ".properties");
+        Iterable<Resource> files = new FileResourceLoader().resources(dir.getAbsolutePath() + "/cucumber", ".properties");
         assertThat(files).hasSize(3);
     }
 

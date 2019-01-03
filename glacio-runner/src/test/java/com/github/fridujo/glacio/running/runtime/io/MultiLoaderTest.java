@@ -11,7 +11,7 @@ class MultiLoaderTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        Iterable<Resource> resources = resourceLoader.resources("src/test/resources", ".properties");
+        Iterable<Resource> resources = resourceLoader.resources("src/test/resources/cucumber", ".properties");
 
         assertThat(resources).hasSize(3);
     }

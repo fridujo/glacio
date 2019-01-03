@@ -8,10 +8,10 @@ public class StepContainerDescriptor extends AbstractGlacioTestDescriptor {
 
     private final StepDescriptorFactory stepDescriptorFactory = new StepDescriptorFactory();
 
-    public StepContainerDescriptor(UniqueId exampleId, UniqueId parentUniqueId, Step step) {
-        super(parentUniqueId.append("step", step.getText()), step.getLine());
+    public StepContainerDescriptor(UniqueId configurationId, UniqueId exampleId, UniqueId parentUniqueId, Step step) {
+        super(configurationId, parentUniqueId.append("step", step.getText()), step.getLine());
 
-        step.getSubsteps().forEach(sub -> addChild(stepDescriptorFactory.create(exampleId, getUniqueId(), sub)));
+        step.getSubsteps().forEach(sub -> addChild(stepDescriptorFactory.create(configurationId, exampleId, getUniqueId(), sub)));
     }
 
     @Override

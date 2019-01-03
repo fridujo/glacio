@@ -8,26 +8,24 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.Node;
 
 import com.github.fridujo.glacio.model.Step;
-import com.github.fridujo.glacio.running.runtime.BeforeExampleEventAware;
+import com.github.fridujo.glacio.running.runtime.configuration.ConfigurationContext;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
 
 public class GlacioEngineExecutionContext implements EngineExecutionContext {
 
-    private final ExecutableLookup executableLookup;
-    private final BeforeExampleEventAware beforeExampleEventAware;
     private final Map<UniqueId, Step> firstFailedStepByExampleId = new ConcurrentHashMap<>();
+    private final Map<UniqueId, ConfigurationContextWrapper> configurationContexts = new ConcurrentHashMap<>();
 
-    public GlacioEngineExecutionContext(ExecutableLookup executableLookup, BeforeExampleEventAware beforeExampleEventAware) {
-        this.executableLookup = executableLookup;
-        this.beforeExampleEventAware = beforeExampleEventAware;
+    public ExecutableLookup getExecutableLookup(UniqueId configurationId) {
+        return configurationContexts.get(configurationId).executableLookup;
     }
 
-    public ExecutableLookup getExecutableLookup() {
-        return executableLookup;
-    }
-
-    public BeforeExampleEventAware getBeforeExampleEventAware() {
-        return beforeExampleEventAware;
+    public GlacioEngineExecutionContext initializeConfiguration(UniqueId configurationId,
+                                                                ExecutableLookup executableLookup,
+                                                                ConfigurationContext configurationContext) {
+        configurationContexts.put(configurationId,
+            new ConfigurationContextWrapper(executableLookup, configurationContext));
+        return this;
     }
 
     public void registerFailure(UniqueId exampleId, Step step) {
@@ -47,5 +45,16 @@ public class GlacioEngineExecutionContext implements EngineExecutionContext {
 
     public void cleanUpExample(UniqueId exampleId) {
         firstFailedStepByExampleId.remove(exampleId);
+    }
+
+    private static class ConfigurationContextWrapper {
+        private final ExecutableLookup executableLookup;
+        private final ConfigurationContext configurationContext;
+
+        private ConfigurationContextWrapper(ExecutableLookup executableLookup,
+                                            ConfigurationContext configurationContext) {
+            this.executableLookup = executableLookup;
+            this.configurationContext = configurationContext;
+        }
     }
 }

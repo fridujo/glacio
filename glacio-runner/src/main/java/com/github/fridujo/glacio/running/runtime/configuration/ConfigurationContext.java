@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.Extension;
 import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
@@ -16,6 +17,7 @@ public class ConfigurationContext {
     private final Class<?> configurationClass;
     private final Set<String> gluePaths;
     private final Set<String> featurePaths;
+    private final Set<BeforeConfigurationCallback> beforeConfigurationCallbacks;
     private final Set<BeforeExampleCallback> beforeExampleCallbacks;
 
     public ConfigurationContext(Class<?> configurationClass,
@@ -25,6 +27,7 @@ public class ConfigurationContext {
         this.configurationClass = configurationClass;
         this.gluePaths = gluePaths;
         this.featurePaths = featurePaths;
+        beforeConfigurationCallbacks = extractSpecificExtensions(extensions, BeforeConfigurationCallback.class);
         beforeExampleCallbacks = extractSpecificExtensions(extensions, BeforeExampleCallback.class);
     }
 
@@ -45,6 +48,16 @@ public class ConfigurationContext {
 
     public Set<String> getFeaturePaths() {
         return featurePaths;
+    }
+
+    public void beforeConfiguration(ExtensionContext extensionContext) {
+        beforeConfigurationCallbacks.forEach(bac -> {
+            try {
+                bac.beforeConfiguration(extensionContext);
+            } catch (Exception e) {
+                logger.warn("Exception occurred in " + BeforeConfigurationCallback.class.getSimpleName() + " (" + bac.getClass() + ")" + ": " + e.getMessage(), e);
+            }
+        });
     }
 
     public void beforeExample(ExtensionContext extensionContext) {

@@ -49,4 +49,10 @@ public class GlacioConfigurationDescriptor extends AbstractGlacioTestDescriptor 
 
         return context.initializeConfiguration(getUniqueId(), executableLookup, configurationContext, extensionContext);
     }
+
+    @Override
+    public GlacioEngineExecutionContext before(GlacioEngineExecutionContext context) {
+        configurationContext.beforeConfiguration(extensionContext);
+        return context;
+    }
 }

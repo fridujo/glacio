@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import com.github.fridujo.glacio.running.api.configuration.GlacioConfiguration;
+import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.ExtendGlacioWith;
 import com.github.fridujo.glacio.running.api.extension.Extension;
@@ -51,6 +52,10 @@ class ConfigurationContextBuilderTest {
         assertThat(defaultConfigurationContext.getGluePaths()).containsExactly("glues-c");
 
         ExtensionContextImpl extensionContext = new ExtensionContextImpl(TestConfiguration.class);
+
+        defaultConfigurationContext.beforeConfiguration(extensionContext);
+        assertThat(extensionContext.getStore("test").<String>get("beforeConfiguration")).isEqualTo("beforeConfiguration");
+
         defaultConfigurationContext.beforeExample(extensionContext);
         assertThat(extensionContext.getStore("test").<String>get("beforeExample")).isEqualTo("beforeExample");
     }
@@ -83,11 +88,16 @@ class ConfigurationContextBuilderTest {
     private static final class TestConfigurationWithNotInstantiableExtension {
     }
 
-    public static final class TestBeforeExample implements BeforeExampleCallback {
+    public static final class TestBeforeExample implements BeforeConfigurationCallback, BeforeExampleCallback {
 
         @Override
         public void beforeExample(ExtensionContext context) {
             context.getStore("test").getOrComputeIfAbsent("beforeExample", Function.identity(), String.class);
+        }
+
+        @Override
+        public void beforeConfiguration(ExtensionContext context) {
+            context.getStore("test").getOrComputeIfAbsent("beforeConfiguration", Function.identity(), String.class);
         }
     }
 }

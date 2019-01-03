@@ -30,6 +30,7 @@ public class Runtime {
             configurationContext.enrichWith(executableLookup);
 
             Set<Feature> features = featureLoader.load(configurationContext.getFeaturePaths());
+            configurationContext.beforeConfiguration(extensionContext);
             FeatureRunner featureRunner = new FeatureRunner(executableLookup, configurationContext, extensionContext);
             features.forEach(featureRunner::runFeature);
         }

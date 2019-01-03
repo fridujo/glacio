@@ -19,6 +19,7 @@ import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
 class ModelParserTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     void nominal_parsing() {
         StringSource source = Resource.load("parsing_glacio_sample.feature");
         ModelParser modelParser = new ModelParser(GherkinLanguages.load());

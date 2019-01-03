@@ -14,6 +14,7 @@ import com.github.fridujo.glacio.running.api.convert.SourceSet;
 import com.github.fridujo.glacio.running.api.convert.Value;
 import com.github.fridujo.glacio.running.runtime.convert.ParameterDescriptors.TypeReference;
 
+@SuppressWarnings("unchecked")
 class ToOptionalConverterTest {
 
     private final Converter converterUnderTest = new ToOptionalConverter();

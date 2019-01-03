@@ -54,6 +54,7 @@ class DataTableToMapConverterTest extends AbstractConverterTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void nominal_conversion_without_parameter_conversion() {
         SourceSet sourceSet = SourceSet.fromRaw(
             table(
@@ -73,6 +74,7 @@ class DataTableToMapConverterTest extends AbstractConverterTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void nominal_conversion_with_parameter_conversion() {
         SourceSet sourceSet = SourceSet.fromRaw(
             table(
@@ -106,9 +108,7 @@ class DataTableToMapConverterTest extends AbstractConverterTest {
         Converter converterUnderTest = new DataTableToMapConverter();
 
         assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> {
-                converterUnderTest.convert(sourceSet, parameterDescriptor);
-            })
+            .isThrownBy(() -> converterUnderTest.convert(sourceSet, parameterDescriptor))
             .withMessage("ParameterConverter must be set to perform parameter conversion");
     }
 

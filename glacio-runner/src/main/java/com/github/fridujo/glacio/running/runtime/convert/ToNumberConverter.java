@@ -9,6 +9,7 @@ import com.github.fridujo.glacio.running.api.convert.Value;
 public class ToNumberConverter extends AbstractPositionedParameterConverter {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Value convert(Value rawValue, ParameterDescriptor parameterDescriptor) {
         final Value value;
         Class<?> parameterType = parameterDescriptor.type;

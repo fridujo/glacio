@@ -55,4 +55,9 @@ public class GlacioConfigurationDescriptor extends AbstractGlacioTestDescriptor 
         configurationContext.beforeConfiguration(extensionContext);
         return context;
     }
+
+    @Override
+    public void after(GlacioEngineExecutionContext context) {
+        configurationContext.afterConfiguration(extensionContext);
+    }
 }

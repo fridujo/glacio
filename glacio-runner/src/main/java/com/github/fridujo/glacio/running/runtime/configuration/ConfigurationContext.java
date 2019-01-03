@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.github.fridujo.glacio.running.api.extension.AfterConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.Extension;
@@ -19,6 +20,7 @@ public class ConfigurationContext {
     private final Set<String> featurePaths;
     private final Set<BeforeConfigurationCallback> beforeConfigurationCallbacks;
     private final Set<BeforeExampleCallback> beforeExampleCallbacks;
+    private final Set<AfterConfigurationCallback> afterConfigurationCallbacks;
 
     public ConfigurationContext(Class<?> configurationClass,
                                 Set<String> gluePaths,
@@ -29,6 +31,7 @@ public class ConfigurationContext {
         this.featurePaths = featurePaths;
         beforeConfigurationCallbacks = extractSpecificExtensions(extensions, BeforeConfigurationCallback.class);
         beforeExampleCallbacks = extractSpecificExtensions(extensions, BeforeExampleCallback.class);
+        afterConfigurationCallbacks = extractSpecificExtensions(extensions, AfterConfigurationCallback.class);
     }
 
     private <T extends Extension> Set<T> extractSpecificExtensions(Set<Extension> extensions, Class<T> extensionClass) {
@@ -66,6 +69,16 @@ public class ConfigurationContext {
                 bac.beforeExample(extensionContext);
             } catch (Exception e) {
                 logger.warn("Exception occurred in " + BeforeExampleCallback.class.getSimpleName() + " (" + bac.getClass() + ")" + ": " + e.getMessage(), e);
+            }
+        });
+    }
+
+    public void afterConfiguration(ExtensionContext extensionContext) {
+        afterConfigurationCallbacks.forEach(bac -> {
+            try {
+                bac.afterConfiguration(extensionContext);
+            } catch (Exception e) {
+                logger.warn("Exception occurred in " + AfterConfigurationCallback.class.getSimpleName() + " (" + bac.getClass() + ")" + ": " + e.getMessage(), e);
             }
         });
     }

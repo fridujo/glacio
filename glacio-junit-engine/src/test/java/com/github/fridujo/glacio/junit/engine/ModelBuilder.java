@@ -15,6 +15,7 @@ import org.junit.platform.engine.UniqueId;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
 import com.github.fridujo.glacio.model.Step;
+import com.github.fridujo.glacio.running.api.extension.AfterConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeExampleCallback;
 import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
@@ -47,10 +48,11 @@ public class ModelBuilder {
         return new TestConfigurationContext();
     }
 
-    public static class TestExtension implements BeforeConfigurationCallback, BeforeExampleCallback {
+    public static class TestExtension implements BeforeConfigurationCallback, BeforeExampleCallback, AfterConfigurationCallback {
 
         public final AtomicInteger beforeConfigurationCounter = new AtomicInteger();
         public final AtomicInteger beforeExampleCounter = new AtomicInteger();
+        public final AtomicInteger afterConfigurationCounter = new AtomicInteger();
 
         @Override
         public void beforeConfiguration(ExtensionContext context) {
@@ -60,6 +62,11 @@ public class ModelBuilder {
         @Override
         public void beforeExample(ExtensionContext context) {
             beforeExampleCounter.incrementAndGet();
+        }
+
+        @Override
+        public void afterConfiguration(ExtensionContext context) {
+            afterConfigurationCounter.incrementAndGet();
         }
     }
 

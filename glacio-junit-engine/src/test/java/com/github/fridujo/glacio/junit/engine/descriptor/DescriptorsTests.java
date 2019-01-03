@@ -97,4 +97,14 @@ class DescriptorsTests {
 
         assertThat(configurationContext.getExtension().beforeExampleCounter).hasValue(1);
     }
+
+    @Test
+    void configurationDescriptor_invoke_after_callbacks_after_execution() {
+        ModelBuilder.TestConfigurationContext configurationContext = testConfigurationContext();
+        GlacioConfigurationDescriptor glacioConfigurationDescriptor = new GlacioConfigurationDescriptor(uniqueId(), configurationContext.configurationContext());
+
+        glacioConfigurationDescriptor.after(new GlacioEngineExecutionContext());
+
+        assertThat(configurationContext.getExtension().afterConfigurationCounter).hasValue(1);
+    }
 }

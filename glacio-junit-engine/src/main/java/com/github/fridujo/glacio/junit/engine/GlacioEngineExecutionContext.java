@@ -8,6 +8,7 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.Node;
 
 import com.github.fridujo.glacio.model.Step;
+import com.github.fridujo.glacio.running.api.extension.ExtensionContext;
 import com.github.fridujo.glacio.running.runtime.configuration.ConfigurationContext;
 import com.github.fridujo.glacio.running.runtime.glue.ExecutableLookup;
 
@@ -22,9 +23,10 @@ public class GlacioEngineExecutionContext implements EngineExecutionContext {
 
     public GlacioEngineExecutionContext initializeConfiguration(UniqueId configurationId,
                                                                 ExecutableLookup executableLookup,
-                                                                ConfigurationContext configurationContext) {
+                                                                ConfigurationContext configurationContext,
+                                                                ExtensionContext extensionContext) {
         configurationContexts.put(configurationId,
-            new ConfigurationContextWrapper(executableLookup, configurationContext));
+            new ConfigurationContextWrapper(executableLookup, configurationContext, extensionContext));
         return this;
     }
 
@@ -43,6 +45,12 @@ public class GlacioEngineExecutionContext implements EngineExecutionContext {
         return skipResult;
     }
 
+    public GlacioEngineExecutionContext notifyBeforeExample(UniqueId configurationId) {
+        ConfigurationContextWrapper configurationContextWrapper = configurationContexts.get(configurationId);
+        configurationContextWrapper.configurationContext.beforeExample(configurationContextWrapper.extensionContext);
+        return this;
+    }
+
     public void cleanUpExample(UniqueId exampleId) {
         firstFailedStepByExampleId.remove(exampleId);
     }
@@ -50,11 +58,14 @@ public class GlacioEngineExecutionContext implements EngineExecutionContext {
     private static class ConfigurationContextWrapper {
         private final ExecutableLookup executableLookup;
         private final ConfigurationContext configurationContext;
+        private final ExtensionContext extensionContext;
 
         private ConfigurationContextWrapper(ExecutableLookup executableLookup,
-                                            ConfigurationContext configurationContext) {
+                                            ConfigurationContext configurationContext,
+                                            ExtensionContext extensionContext) {
             this.executableLookup = executableLookup;
             this.configurationContext = configurationContext;
+            this.extensionContext = extensionContext;
         }
     }
 }

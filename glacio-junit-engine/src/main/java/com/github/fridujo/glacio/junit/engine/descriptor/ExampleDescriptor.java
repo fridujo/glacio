@@ -36,6 +36,11 @@ public class ExampleDescriptor extends AbstractGlacioTestDescriptor {
         return Type.CONTAINER;
     }
 
+    @Override
+    public GlacioEngineExecutionContext prepare(GlacioEngineExecutionContext context) {
+        return context.notifyBeforeExample(configurationId);
+    }
+
     public void cleanUp(GlacioEngineExecutionContext context) {
         context.cleanUpExample(getUniqueId());
     }

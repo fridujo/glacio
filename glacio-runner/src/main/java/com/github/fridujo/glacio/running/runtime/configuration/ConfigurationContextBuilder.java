@@ -1,13 +1,17 @@
 package com.github.fridujo.glacio.running.runtime.configuration;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toCollection;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.fridujo.glacio.running.api.configuration.GlacioConfiguration;
+import com.github.fridujo.glacio.running.api.extension.ExtendGlacioWith;
+import com.github.fridujo.glacio.running.api.extension.Extension;
 import com.github.fridujo.glacio.running.runtime.GlacioRunnerInitializationException;
 import com.github.fridujo.glacio.running.runtime.RuntimeOptions;
 
@@ -28,7 +32,8 @@ public class ConfigurationContextBuilder {
         return new ConfigurationContext(
             null,
             runtimeOptions.getGluePaths(),
-            runtimeOptions.getFeaturePaths()
+            runtimeOptions.getFeaturePaths(),
+            emptySet()
         );
     }
 
@@ -41,7 +46,21 @@ public class ConfigurationContextBuilder {
         Set<String> featurePaths = toSet(configuration.featurePaths());
         Set<String> gluePaths = toSet(configuration.gluePaths());
 
-        return new ConfigurationContext(configurationClass, gluePaths, featurePaths);
+        ExtendGlacioWith[] annotationsByType = configurationClass.getAnnotationsByType(ExtendGlacioWith.class);
+        Set<Extension> extensions = stream(annotationsByType)
+            .map(ExtendGlacioWith::value)
+            .map(this::instantiate)
+            .collect(Collectors.toSet());
+        return new ConfigurationContext(configurationClass, gluePaths, featurePaths, extensions);
+    }
+
+    private Extension instantiate(Class<? extends Extension> extensionClass) {
+        try {
+            return extensionClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new GlacioRunnerInitializationException("Cannot instantiate " + Extension.class.getSimpleName() +
+                " class " + extensionClass.getName(), e);
+        }
     }
 
     private Set<String> toSet(String[] strings) {

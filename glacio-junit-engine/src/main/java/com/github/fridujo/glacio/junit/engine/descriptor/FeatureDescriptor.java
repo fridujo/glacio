@@ -6,10 +6,10 @@ import com.github.fridujo.glacio.model.Feature;
 
 public class FeatureDescriptor extends AbstractGlacioTestDescriptor {
 
-    public FeatureDescriptor(UniqueId parentUniqueId, Feature feature) {
-        super(parentUniqueId.append("feature", feature.getName()), "Feature: " + feature.getName());
+    public FeatureDescriptor(UniqueId configurationId, UniqueId parentUniqueId, Feature feature) {
+        super(configurationId, parentUniqueId.append("feature", feature.getName()), "Feature: " + feature.getName());
 
-        feature.getExamples().forEach(example -> addChild(new ExampleDescriptor(getUniqueId(), example)));
+        feature.getExamples().forEach(example -> addChild(new ExampleDescriptor(configurationId, getUniqueId(), example)));
     }
 
     @Override

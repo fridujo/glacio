@@ -13,10 +13,10 @@ public class ExampleDescriptor extends AbstractGlacioTestDescriptor {
 
     private final StepDescriptorFactory stepDescriptorFactory = new StepDescriptorFactory();
 
-    public ExampleDescriptor(UniqueId parentUniqueId, Example example) {
-        super(parentUniqueId.append(SEGMENT_TYPE, example.getName() + example.getParameters().hashCode()), displayName(example));
+    public ExampleDescriptor(UniqueId configurationId, UniqueId parentUniqueId, Example example) {
+        super(configurationId, parentUniqueId.append(SEGMENT_TYPE, example.getName() + example.getParameters().hashCode()), displayName(example));
 
-        example.getSteps().forEach(step -> addChild(stepDescriptorFactory.create(getUniqueId(), getUniqueId(), step)));
+        example.getSteps().forEach(step -> addChild(stepDescriptorFactory.create(configurationId, getUniqueId(), getUniqueId(), step)));
     }
 
     private static String displayName(Example example) {
@@ -34,12 +34,6 @@ public class ExampleDescriptor extends AbstractGlacioTestDescriptor {
     @Override
     public Type getType() {
         return Type.CONTAINER;
-    }
-
-    @Override
-    public GlacioEngineExecutionContext prepare(GlacioEngineExecutionContext context) {
-        context.getBeforeExampleEventAware().beforeExample();
-        return context;
     }
 
     public void cleanUp(GlacioEngineExecutionContext context) {

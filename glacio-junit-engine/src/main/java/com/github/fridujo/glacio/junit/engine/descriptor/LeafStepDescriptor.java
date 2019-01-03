@@ -15,8 +15,8 @@ public class LeafStepDescriptor extends AbstractGlacioTestDescriptor {
     private final UniqueId exampleId;
     private final Step step;
 
-    public LeafStepDescriptor(UniqueId exampleId, UniqueId parentUniqueId, Step step) {
-        super(parentUniqueId.append("step", step.getText()), step.getLine());
+    public LeafStepDescriptor(UniqueId configurationId, UniqueId exampleId, UniqueId parentUniqueId, Step step) {
+        super(configurationId, parentUniqueId.append("step", step.getText()), step.getLine());
         this.exampleId = exampleId;
         this.step = step;
     }
@@ -31,7 +31,7 @@ public class LeafStepDescriptor extends AbstractGlacioTestDescriptor {
                                                 DynamicTestExecutor dynamicTestExecutor) {
         ExecutionResult executionResult;
         try {
-            Executable executable = context.getExecutableLookup().lookup(step);
+            Executable executable = context.getExecutableLookup(configurationId).lookup(step);
             executionResult = executable.execute();
         } catch (MissingStepImplementationException | AmbiguousStepDefinitionsException e) {
             executionResult = new ExecutionResult(Status.FAIL, e.getMessage());

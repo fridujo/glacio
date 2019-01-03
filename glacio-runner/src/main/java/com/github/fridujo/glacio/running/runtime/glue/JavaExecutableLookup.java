@@ -22,14 +22,18 @@ import com.github.fridujo.glacio.running.runtime.io.ResourceLoaderClassFinder;
 
 public class JavaExecutableLookup implements ExecutableLookup {
 
+    /**
+     * Visible for test.
+     */
+    final GlueFactory glueFactory;
     private final Map<Pattern, Method> methodsByPattern;
-    private final GlueFactory glueFactory;
     private final MethodParameterConverter methodParameterConverter = new MethodParameterConverter();
 
-    public JavaExecutableLookup(ClassLoader classLoader, Set<String> gluePaths, GlueFactory glueFactory) {
-        this.glueFactory = glueFactory;
-        ClassFinder classFinder = new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
+    public JavaExecutableLookup(ClassLoader classLoader,
+                                Set<String> gluePaths) {
+        glueFactory = new GlueFactory();
 
+        ClassFinder classFinder = new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
         methodsByPattern = gluePaths
             .stream()
             .flatMap(gluePath -> classFinder.getDescendants(Object.class, gluePath).stream())

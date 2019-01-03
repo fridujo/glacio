@@ -13,6 +13,7 @@ import org.junit.platform.engine.UniqueId;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
 import com.github.fridujo.glacio.model.Step;
+import com.github.fridujo.glacio.running.runtime.configuration.ConfigurationContext;
 
 public class ModelBuilder {
 
@@ -35,5 +36,22 @@ public class ModelBuilder {
 
     public static Step step() {
         return new Step(false, Optional.empty(), "test", Optional.empty(), emptyList());
+    }
+
+    public static TestConfigurationContext testConfigurationContext() {
+        return new TestConfigurationContext();
+    }
+
+    public static class TestConfigurationContext {
+
+        private final ConfigurationContext configurationContext = new ConfigurationContext(
+            String.class,
+            emptySet(),
+            emptySet()
+        );
+
+        public ConfigurationContext configurationContext() {
+            return configurationContext;
+        }
     }
 }

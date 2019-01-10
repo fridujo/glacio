@@ -1,0 +1,2 @@
+ignore:
+  - "**/ParameterAutowireUtils.java"  # copied from spring-test

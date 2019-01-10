@@ -28,6 +28,7 @@ public class GlueFactory {
         this.extensionContext = extensionContext;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getGlue(Class<T> glueClass) {
         if (!scenarioScopedInstances.containsKey(glueClass)) {
             scenarioScopedInstances.put(glueClass, createInstance(glueClass));
@@ -48,6 +49,7 @@ public class GlueFactory {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T> Constructor<T> findConstructor(Class<T> glueClass) {
         Constructor<T>[] declaredConstructors = (Constructor<T>[]) glueClass.getDeclaredConstructors();
         final Constructor<T> constructor;

@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 
 import org.springframework.beans.BeansException;
@@ -72,7 +74,7 @@ abstract class ParameterAutowireUtils {
      */
     private static AnnotatedElement getEffectiveAnnotatedParameter(Parameter parameter, int index) {
         Executable executable = parameter.getDeclaringExecutable();
-        if (executable instanceof Constructor && ClassUtils.isInnerClass(executable.getDeclaringClass()) &&
+        if (executable instanceof Constructor && isInnerClass(executable.getDeclaringClass()) &&
             executable.getParameterAnnotations().length == executable.getParameterCount() - 1) {
             // Bug in javac in JDK <9: annotation array excludes enclosing instance parameter
             // for inner classes, so access it with the actual parameter index lowered by 1
@@ -117,7 +119,7 @@ abstract class ParameterAutowireUtils {
         Autowired autowired = AnnotatedElementUtils.findMergedAnnotation(annotatedParameter, Autowired.class);
         boolean required = (autowired == null || autowired.required());
 
-        MethodParameter methodParameter = SynthesizingMethodParameter.forExecutable(
+        MethodParameter methodParameter = forExecutable(
             parameter.getDeclaringExecutable(), parameterIndex);
         DependencyDescriptor descriptor = new DependencyDescriptor(methodParameter, required);
         descriptor.setContainingClass(containingClass);
@@ -143,5 +145,37 @@ abstract class ParameterAutowireUtils {
         return (AnnotatedElementUtils.hasAnnotation(annotatedParameter, Autowired.class) ||
             AnnotatedElementUtils.hasAnnotation(annotatedParameter, Qualifier.class) ||
             AnnotatedElementUtils.hasAnnotation(annotatedParameter, Value.class));
+    }
+
+    /**
+     * Create a new SynthesizingMethodParameter for the given method or constructor.
+     * <p>This is a convenience factory method for scenarios where a
+     * Method or Constructor reference is treated in a generic fashion.
+     * @param executable the Method or Constructor to specify a parameter for
+     * @param parameterIndex the index of the parameter
+     * @return the corresponding SynthesizingMethodParameter instance
+     * @since 5.0
+     */
+    private static SynthesizingMethodParameter forExecutable(Executable executable, int parameterIndex) {
+        if (executable instanceof Method) {
+            return new SynthesizingMethodParameter((Method) executable, parameterIndex);
+        }
+        else if (executable instanceof Constructor) {
+            return new SynthesizingMethodParameter((Constructor<?>) executable, parameterIndex);
+        }
+        else {
+            throw new IllegalArgumentException("Not a Method/Constructor: " + executable);
+        }
+    }
+
+    /**
+     * Determine if the supplied class is an <em>inner class</em>,
+     * i.e. a non-static member of an enclosing class.
+     * @return {@code true} if the supplied class is an inner class
+     * @since 5.0.5
+     * @see Class#isMemberClass()
+     */
+    private static boolean isInnerClass(Class<?> clazz) {
+        return (clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers()));
     }
 }

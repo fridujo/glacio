@@ -35,6 +35,7 @@ class GlueFactoryTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void before_reset_object_cache() {
         List<Object> list = (List<Object>) glueFactory.getGlue(ArrayList.class);
         list.add(new Object());
@@ -58,8 +59,8 @@ class GlueFactoryTest {
         assertThatExceptionOfType(GlacioRunnerException.class)
             .as("class with private constructor")
             .isThrownBy(() -> glueFactory.getGlue(TestGlueWithParameter.class))
-            .withMessage("Cannot create instance of class " + TestGlueWithParameter.class.getSimpleName() +
-                ": No ParameterResolver matches parameter GlueFactoryTest$TestGlueWithParameter([0] String param)");
+            .withMessageStartingWith("Cannot create instance of class " + TestGlueWithParameter.class.getSimpleName() +
+                ": No ParameterResolver matches parameter GlueFactoryTest$TestGlueWithParameter([0] String");
     }
 
     @Test

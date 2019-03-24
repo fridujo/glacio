@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
-
 import com.github.fridujo.glacio.parsing.charstream.Position;
 
 public class GherkinLanguages implements Languages {
@@ -22,6 +21,9 @@ public class GherkinLanguages implements Languages {
     public static Languages load() throws IllegalStateException {
         try {
             try (InputStream inputStream = GherkinLanguages.class.getClassLoader().getResourceAsStream("gherkin-languages.json")) {
+                if (inputStream == null) {
+                    throw new IllegalStateException("Gherkin language was unable to find [gherkin-languages.json] in classpath");
+                }
                 JsonObject jsonObject = Json.parse(new BufferedReader(new InputStreamReader(inputStream))).asObject();
                 return new GherkinLanguages(new GherkinJsonMapper().map(jsonObject));
             }

@@ -10,14 +10,12 @@ import com.github.fridujo.glacio.running.runtime.glue.AmbiguousStepDefinitionsEx
 import com.github.fridujo.glacio.running.runtime.glue.Executable;
 import com.github.fridujo.glacio.running.runtime.glue.MissingStepImplementationException;
 
-public class LeafStepDescriptor extends AbstractGlacioTestDescriptor {
+public class LeafStepDescriptor extends AbstractGlacioSkippableTestDescriptor {
     private final ExceptionConverter exceptionConverter = new ExceptionConverter();
-    private final UniqueId exampleId;
     private final Step step;
 
     public LeafStepDescriptor(UniqueId configurationId, UniqueId exampleId, UniqueId parentUniqueId, Step step) {
-        super(configurationId, parentUniqueId.append("step", step.getText()), step.getLine());
-        this.exampleId = exampleId;
+        super(configurationId, exampleId, parentUniqueId.append("step", step.getText()), step.getLine());
         this.step = step;
     }
 
@@ -42,10 +40,5 @@ public class LeafStepDescriptor extends AbstractGlacioTestDescriptor {
             exceptionConverter.toException(executionResult);
         }
         return context;
-    }
-
-    @Override
-    public SkipResult shouldBeSkipped(GlacioEngineExecutionContext context) {
-        return context.shouldBeSkipped(exampleId);
     }
 }

@@ -12,7 +12,7 @@ import com.github.fridujo.glacio.junit.engine.descriptor.GlacioEngineDescriptor;
 import com.github.fridujo.glacio.junit.engine.discovery.DiscoverySelectorResolver;
 
 public class GlacioTestEngine extends HierarchicalTestEngine<GlacioEngineExecutionContext> {
-
+    
     @Override
     public String getId() {
         return GlacioProperties.ENGINE_ID;
@@ -28,9 +28,9 @@ public class GlacioTestEngine extends HierarchicalTestEngine<GlacioEngineExecuti
 
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-        TestDescriptor testDescriptor = new GlacioEngineDescriptor(uniqueId);
+        GlacioEngineDescriptor testDescriptor = new GlacioEngineDescriptor(uniqueId);
 
-        new DiscoverySelectorResolver(discoveryRequest).resolveFor(testDescriptor);
+        new DiscoverySelectorResolver().resolve(discoveryRequest, testDescriptor);
 
         return testDescriptor;
     }

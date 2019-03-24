@@ -16,13 +16,13 @@ import com.github.fridujo.glacio.running.runtime.io.MultiLoader;
 
 public class GlacioConfigurationDescriptor extends AbstractGlacioTestDescriptor {
 
-    public static final String SEGMENT_TYPE = "configuration";
+    public static final String SEGMENT_TYPE = "configurationClass";
     private final ConfigurationContext configurationContext;
     private final ExtensionContextImpl extensionContext;
 
     public GlacioConfigurationDescriptor(UniqueId parentUniqueId, ConfigurationContext configurationContext) {
-        super(parentUniqueId.append(SEGMENT_TYPE, configurationContext.name()),
-            parentUniqueId.append(SEGMENT_TYPE, configurationContext.name()),
+        super(parentUniqueId.append(SEGMENT_TYPE, configurationContext.getConfigurationClass().getName()),
+            parentUniqueId.append(SEGMENT_TYPE, configurationContext.getConfigurationClass().getName()),
             configurationContext.name());
         this.configurationContext = configurationContext;
         extensionContext = new ExtensionContextImpl(configurationContext.getConfigurationClass());

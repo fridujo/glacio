@@ -48,7 +48,8 @@ class DiscoveryTests {
     void discovery_with_selector() {
         LauncherDiscoveryRequest request = request()
             .configurationParameter("glacio-junit-engine.disabled", "false")
-            .selectors(DiscoverySelectors.selectClass(TestInitializer.class.getName()))
+            .selectors(DiscoverySelectors.selectPackage(TestInitializer.class.getPackage().getName()))
+            //.selectors(DiscoverySelectors.selectClass(TestInitializer.class.getName()))
             .build();
 
         TestDescriptor glacioDescriptor = engine.discover(request, engineId);

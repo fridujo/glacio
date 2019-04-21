@@ -1,0 +1,6 @@
+* xref:index.adoc[Glacio]
+* xref:getting_started.adoc[Getting started]
+* xref:writing.adoc[Writing features]
+* Misc
+** xref:why.adoc#gradle[Why Glacio ?]
+

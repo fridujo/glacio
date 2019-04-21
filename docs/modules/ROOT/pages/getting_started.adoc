@@ -1,0 +1,88 @@
+= Getting started
+:hardbreaks:
+
+== Glacio configuration
+
+Configurations are the entry point of any Glacio runner.
+They gather:
+
+* feature files locations
+* glue code location
+* extensions and their configurations
+
+This way, you can have multiple configurations with heterogeneous setups living in the same project.
+
+A simple configuration can be
+[source,java]
+----
+@GlacioConfiguration(
+    featurePaths = "classpath:features",
+    gluePaths = "com.glacio.sample"
+)
+public class BusinessTests {
+}
+----
+
+And a complex one can be
+[source,java]
+----
+@GlacioConfiguration(
+    featurePaths = {"classpath:featuresA", "file:featureB"},
+    gluePaths = {"com.github.fridujo.glacio.extension.spring", "com.glacio.sample"}
+)
+@ExtendGlacioWith(SpringExtension.class)
+@ContextConfiguration(classes = TestApp.class)
+@TestPropertySource(properties = "my.prop=45.3D")
+class BusinessTests {
+}
+----
+
+
+== Using JUnit5
+
+Add the following dependency to the *pom.xml* file
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.fridujo</groupId>
+    <artifactId>glacio-junit-engine</artifactId>
+    <version>{page-component-version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+The engine will be picked-up by the *platform launcher* used either by Maven, Gradle or IntelliJ IDEA.
+The filters only apply on configuration classes, not on feature files.
+
+== Using Spring
+
+You can wire *Spring* beans in glue-code classes, the same way it is done in JUnit5.
+This means that parameters that are to be injected from the *Spring* context must be marked with `@Autowired`.
+This is because, extesions are composable, and the only way the `SpringExtension` can know that some parameter must be injected or not, is to mark it.
+
+Add the following dependency to the *pom.xml* file
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.fridujo</groupId>
+    <artifactId>glacio-spring</artifactId>
+    <version>{page-component-version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+The extension is not enabled by default, and must be explicitly done when needed.
+And add the following annotations on a Glacio configuration
+
+[source,java]
+----
+@GlacioConfiguration(...)
+@ExtendGlacioWith(SpringExtension.class) # <1>
+@ContextConfiguration(classes = TestApp.class) # <2>
+@TestPropertySource(properties = "my.prop=45.3D") # <3>
+class BusinessTests {
+}
+----
+<1> enable the `SpringExtension` for the *BusinessTests* configuration
+<2> supply a root *Spring* configuration to load
+<3> use as many *Spring* or *Spring-Boot* test annotations

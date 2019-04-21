@@ -1,0 +1,12 @@
+= Why Glacio ?
+
+Why indeed make another BDD tool whereas Cucumber is already a great tool ?
+
+The idea came in a team where we were heavily using Cucumber.
+At some point, all members of the team, including non-technical folks where knowing that some feature specificities where hidden in the glue-code.
+
+So multiple variant of the same action were written, but the simplest were doing the most, using multiple default behaviors.
+As for exploratory testing, even POs were using low-level small programs to make an HTTP call or send a JMS message.
+
+And we though he would be nice to have multi-levels definitions.
+This way we can link as many technical details as needed to an high-level business definition.

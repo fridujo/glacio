@@ -1,0 +1,47 @@
+= Writing features
+:hardbreaks:
+
+Glacio is compatible with the Gherkin syntax and adds the capability to nest steps.
+All Gherkin language elements are available (DocString, Tables, Examples, etc.)
+
+You can nest as many steps as you need to best describe a feature.
+Only the leaf steps will be linked to executable glue-code.
+
+For example, this feature
+[source,gherkin]
+----
+Feature: User login
+
+    Scenario: Successful login
+
+        Given a user with valid credentials
+            Insert generated user with valid credentials in database
+                Generate variable 'username' # <1>
+                Generate variable 'password'
+                Execute SQL # <2>
+                """
+                  INSERT INTO USERS(USERNAME, PASSWORD, ENABLED)
+                    VALUES('${username}', '${password}', 1)
+                """
+        And the user in on the login page
+            Open a 'Chrome' browser # <3>
+----
+
+Will look for these methods
+[source,java]
+----
+@Given("Generate variable '(.+)'") # <1>
+public void generate_variable(String variableName) {
+    // context.put(variableName, UUID.randomUUID().toString());
+}
+
+@Given("Execute SQL") # <2>
+public void execute_sql(String statement) {
+    // db.excute(statement);
+}
+
+@Given("Open a '(.+)' browser") # <3>
+public void open_a_browser(BrowserType browserType) {
+    // this.driver = browserType.newDriver();
+}
+----

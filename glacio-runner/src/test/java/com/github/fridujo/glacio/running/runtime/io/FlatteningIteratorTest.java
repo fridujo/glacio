@@ -16,7 +16,7 @@ class FlatteningIteratorTest {
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
 
-        assertThat(fi).containsExactly(1, 2, 3, 4);
+        assertThat(fi).toIterable().containsExactly(1, 2, 3, 4);
 
         assertThat(fi.hasNext()).isFalse();
 

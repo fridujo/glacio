@@ -38,7 +38,7 @@
 
         <pitest-junit5.version>0.10</pitest-junit5.version>
         <pitest-maven-plugin.version>1.4.0</pitest-maven-plugin.version>
-        <descartes.version>1.2.4</descartes.version>
+        <descartes.version>1.2.6</descartes.version>
     </properties>
 
     <modules>

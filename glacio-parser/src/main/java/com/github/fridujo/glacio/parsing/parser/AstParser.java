@@ -18,6 +18,7 @@ import com.github.fridujo.glacio.ast.Feature;
 import com.github.fridujo.glacio.ast.Keyword;
 import com.github.fridujo.glacio.ast.KeywordType;
 import com.github.fridujo.glacio.ast.Position;
+import com.github.fridujo.glacio.ast.PositionedString;
 import com.github.fridujo.glacio.ast.RootStep;
 import com.github.fridujo.glacio.ast.Scenario;
 import com.github.fridujo.glacio.ast.ScenarioOutline;
@@ -47,7 +48,7 @@ public class AstParser {
     }
 
     public Feature parseFeature() {
-        consumeComments(true);
+        Optional<PositionedString> language = consumeComments(true);
         List<Tag> tags = parseTags();
         Token potentialFeature = lexer.next();
         if (potentialFeature.isOfType(TokenType.FEATURE)) {
@@ -58,7 +59,7 @@ public class AstParser {
                 Optional<String> description = parseDescription();
                 Optional<Background> background = parseBackground();
                 List<Scenario> scenarios = parseScenarios();
-                return new Feature(potentialFeature.getPosition().asModelPosition(), name, tags, description, background, scenarios);
+                return new Feature(potentialFeature.getPosition().asModelPosition(), name, language, tags, description, background, scenarios);
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -96,7 +97,7 @@ public class AstParser {
     }
 
     public Scenario parseScenario() {
-        consumeComments(true);
+        consumeComments(false);
         List<Tag> tags = parseTags();
         Token potentialScenario = lexer.next();
         if (potentialScenario.isOfType(TokenType.SCENARIO)) {
@@ -274,7 +275,8 @@ public class AstParser {
         }
     }
 
-    private void consumeComments(boolean interpretLanguageHint) {
+    private Optional<PositionedString> consumeComments(boolean interpretLanguageHint) {
+        PositionedString explicitLanguage = null;
         while (lexer.peekNextNonBlankToken().isOfType(TokenType.COMMENT_DELIMITER)) {
             lexer.skipBlanksAndEOL();
             lexer.next(); // consume COMMENT_DELIMITER
@@ -283,10 +285,13 @@ public class AstParser {
             Matcher languageMatcher = languageHintPattern.matcher(comment);
             if (interpretLanguageHint && languageMatcher.matches()) {
                 String language = languageMatcher.group("language");
-                lexer.setLanguageKeywords(languages.get(tokenSequence.getPosition(), language));
+                Position languagePosition = tokenSequence.getPosition().asModelPosition();
+                lexer.setLanguageKeywords(languages.get(languagePosition, language));
+                explicitLanguage = new PositionedString(languagePosition, language);
             }
             lexer.skipBlanksAndEOL();
         }
+        return Optional.ofNullable(explicitLanguage);
     }
 
     private String formatTextBloc(String unformattedText) {

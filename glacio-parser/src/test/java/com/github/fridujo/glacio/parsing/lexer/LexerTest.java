@@ -47,6 +47,8 @@ public class LexerTest {
 
         lexer.setLanguageKeywords(new LanguageKeywords(
             "test",
+            "test",
+            "test",
             singleton("Feature"),
             singleton("Background"),
             singleton("Scenario Outline"),

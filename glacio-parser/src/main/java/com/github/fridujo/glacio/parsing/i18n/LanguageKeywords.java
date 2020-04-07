@@ -6,7 +6,9 @@ import java.util.Set;
 
 public class LanguageKeywords {
 
+    private final String code;
     private final String languageName;
+    private final String nativeName;
     private final Set<String> feature;
     private final Set<String> background;
     private final Set<String> scenarioOutline;
@@ -17,7 +19,9 @@ public class LanguageKeywords {
     private final Set<String> and;
     private final Set<String> examples;
 
-    public LanguageKeywords(String languageName,
+    public LanguageKeywords(String code,
+                            String languageName,
+                            String nativeName,
                             Set<String> feature,
                             Set<String> background,
                             Set<String> scenarioOutline,
@@ -26,7 +30,9 @@ public class LanguageKeywords {
                             Set<String> when,
                             Set<String> then,
                             Set<String> and, Set<String> examples) {
+        this.code = code;
         this.languageName = languageName;
+        this.nativeName = nativeName;
         this.feature = feature;
         this.background = background;
         this.scenarioOutline = scenarioOutline;
@@ -40,6 +46,8 @@ public class LanguageKeywords {
 
     public static LanguageKeywords empty() {
         return new LanguageKeywords("empty",
+            "empty",
+            "empty",
             emptySet(),
             emptySet(),
             emptySet(),
@@ -51,8 +59,16 @@ public class LanguageKeywords {
             emptySet());
     }
 
+    public String getCode() {
+        return code;
+    }
+
     public String getLanguageName() {
         return languageName;
+    }
+
+    public String getNativeName() {
+        return nativeName;
     }
 
     public Set<String> getFeature() {

@@ -12,6 +12,7 @@ import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
 import com.github.fridujo.glacio.model.Keyword;
+import com.github.fridujo.glacio.model.Language;
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.model.StepArgument;
 import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
@@ -28,6 +29,7 @@ class ModelParserTest {
 
         assertThat(feature.getSourceURI()).isEqualTo(source.getURI());
         assertThat(feature.getName()).isEqualTo("User login");
+        assertThat(feature.getLanguage()).isEqualToComparingFieldByField(new Language("en", "English", "English"));
         assertThat(feature.getExamples())
             .hasSize(3)
             .extracting(Example::getName)

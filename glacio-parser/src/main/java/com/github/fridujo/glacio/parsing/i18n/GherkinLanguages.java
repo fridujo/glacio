@@ -9,7 +9,7 @@ import java.util.Map;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 
-import com.github.fridujo.glacio.parsing.charstream.Position;
+import com.github.fridujo.glacio.ast.Position;
 
 public class GherkinLanguages implements Languages {
 
@@ -32,7 +32,7 @@ public class GherkinLanguages implements Languages {
 
     public LanguageKeywords get(Position position, String language) throws LanguageNotFoundException {
         if (!languageKeywordsByLanguages.containsKey(language)) {
-            throw new LanguageNotFoundException(position, language, languageKeywordsByLanguages.keySet());
+            throw new LanguageNotFoundException(position.asParsingPosition(), language, languageKeywordsByLanguages.keySet());
         }
         return languageKeywordsByLanguages.get(language);
     }

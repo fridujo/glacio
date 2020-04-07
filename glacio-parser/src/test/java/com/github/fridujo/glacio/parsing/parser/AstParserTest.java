@@ -46,6 +46,8 @@ class AstParserTest {
         Feature feature = parseFeature(text);
 
         assertThat(feature).isNotNull();
+        assertThat(feature.getLanguage()).isPresent();
+        assertThat(feature.getLanguage().get().getValue()).isEqualTo("en");
         assertThat(feature.getTags()).extracting(Tag::getName).containsExactly("tag1", "tag2");
         assertThat(feature.getDescription()).contains("Free form description\ncan be placed here");
         assertThat(feature.getBackground()).isPresent();

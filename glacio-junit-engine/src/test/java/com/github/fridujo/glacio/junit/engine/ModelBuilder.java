@@ -4,9 +4,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
+import static java.util.Optional.empty;
 
 import java.net.URI;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,6 +14,7 @@ import org.junit.platform.engine.UniqueId;
 
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
+import com.github.fridujo.glacio.model.Language;
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.running.api.extension.AfterConfigurationCallback;
 import com.github.fridujo.glacio.running.api.extension.BeforeConfigurationCallback;
@@ -28,7 +29,7 @@ public class ModelBuilder {
     }
 
     public static Feature feature() {
-        return new Feature(URI.create("file:test"), "test", emptyList());
+        return new Feature(URI.create("file:test"), "test", new Language("test", "test", "test"), emptyList());
     }
 
     public static Example example() {
@@ -41,7 +42,7 @@ public class ModelBuilder {
     }
 
     public static Step step() {
-        return new Step(false, Optional.empty(), "test", Optional.empty(), emptyList());
+        return new Step(false, empty(), "test", empty(), emptyList());
     }
 
     public static TestConfigurationContext testConfigurationContext() {

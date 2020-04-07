@@ -12,16 +12,17 @@ import com.eclipsesource.json.JsonObject;
 public class GherkinJsonMapper {
 
     public Map<String, LanguageKeywords> map(JsonObject jsonObject) {
-        List<String> languageNames = jsonObject.names();
+        List<String> languageCodes = jsonObject.names();
 
-        return languageNames.stream().collect(Collectors.toMap(
+        return languageCodes.stream().collect(Collectors.toMap(
             Function.identity(),
-            k -> mapToLanguage(jsonObject.get(k).asObject())
+            code -> mapToLanguage(code, jsonObject.get(code).asObject())
         ));
     }
 
-    private LanguageKeywords mapToLanguage(JsonObject jsonObject) {
+    private LanguageKeywords mapToLanguage(String code, JsonObject jsonObject) {
         String name = jsonObject.get("name").asString();
+        String nativeName = jsonObject.get("native").asString();
         Set<String> feature = getKeywords(jsonObject, "feature");
         Set<String> scenarioOutline = getKeywords(jsonObject, "scenarioOutline");
         Set<String> background = getKeywords(jsonObject, "background");
@@ -34,7 +35,9 @@ public class GherkinJsonMapper {
         Set<String> examples = getKeywords(jsonObject, "examples");
 
         return new LanguageKeywords(
+            code,
             name,
+            nativeName,
             feature,
             background,
             scenarioOutline,

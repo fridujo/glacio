@@ -6,11 +6,13 @@ import java.util.List;
 public class Feature {
     private final URI sourceURI;
     private final String name;
+    private final Language language;
     private final List<Example> examples;
 
-    public Feature(URI sourceURI, String name, List<Example> examples) {
+    public Feature(URI sourceURI, String name, Language language, List<Example> examples) {
         this.sourceURI = sourceURI;
         this.name = name;
+        this.language = language;
         this.examples = examples;
     }
 
@@ -20,6 +22,10 @@ public class Feature {
 
     public String getName() {
         return name;
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 
     public List<Example> getExamples() {

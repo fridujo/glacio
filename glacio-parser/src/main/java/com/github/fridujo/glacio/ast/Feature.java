@@ -7,6 +7,7 @@ public class Feature implements Positioned, Described {
 
     private final Position position;
     private final String name;
+    private final Optional<PositionedString> language;
     private final List<Tag> tags;
     private final Optional<String> description;
     private final Optional<Background> background;
@@ -14,12 +15,14 @@ public class Feature implements Positioned, Described {
 
     public Feature(Position position,
                    String name,
+                   Optional<PositionedString> language,
                    List<Tag> tags,
                    Optional<String> description,
                    Optional<Background> background,
                    List<Scenario> scenarios) {
         this.position = position;
         this.name = name;
+        this.language = language;
         this.tags = tags;
         this.description = description;
         this.background = background;
@@ -33,6 +36,10 @@ public class Feature implements Positioned, Described {
 
     public String getName() {
         return name;
+    }
+
+    public Optional<PositionedString> getLanguage() {
+        return language;
     }
 
     public List<Tag> getTags() {

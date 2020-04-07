@@ -21,11 +21,11 @@ public class DataTable implements StepArgument {
     public List<Row> getRows() {
         return rows;
     }
-    
+
     public boolean isSquare() {
         return minWidth == maxWidth;
     }
-    
+
     public boolean hasWidth(int width) {
         return width <= minWidth;
     }

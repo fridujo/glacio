@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import com.github.fridujo.glacio.ast.Background;
 import com.github.fridujo.glacio.ast.KeywordType;
+import com.github.fridujo.glacio.ast.PositionedString;
 import com.github.fridujo.glacio.ast.RootStep;
 import com.github.fridujo.glacio.ast.Scenario;
 import com.github.fridujo.glacio.ast.ScenarioOutline;
@@ -27,9 +28,11 @@ import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
 import com.github.fridujo.glacio.model.Keyword;
+import com.github.fridujo.glacio.model.Language;
 import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.model.StepArgument;
 import com.github.fridujo.glacio.parsing.charstream.CharStream;
+import com.github.fridujo.glacio.parsing.i18n.LanguageKeywords;
 import com.github.fridujo.glacio.parsing.i18n.Languages;
 import com.github.fridujo.glacio.parsing.lexer.Lexer;
 import com.github.fridujo.glacio.parsing.parser.AstParser;
@@ -49,11 +52,17 @@ public class ModelParser {
         AstParser astParser = new AstParser(lexer, languages);
         com.github.fridujo.glacio.ast.Feature astFeature = astParser.parseFeature();
 
-        return mapToFeature(stringSource.getURI(), astFeature);
+        return mapToFeature(stringSource.getURI(), astFeature, languages);
     }
 
-    private Feature mapToFeature(URI uri, com.github.fridujo.glacio.ast.Feature astFeature) {
-        return new Feature(uri, astFeature.getName(), mapToExamples(astFeature));
+    private Feature mapToFeature(URI uri, com.github.fridujo.glacio.ast.Feature astFeature, Languages languages) {
+        return new Feature(uri, astFeature.getName(), mapToLanguage(astFeature.getLanguage(), languages), mapToExamples(astFeature));
+    }
+
+    private Language mapToLanguage(Optional<PositionedString> language, Languages languages) {
+        LanguageKeywords languageKeywords = language.map(l -> languages.get(l.getPosition(), l.getValue())).orElse(languages.defaultLanguage());
+
+        return new Language(languageKeywords.getCode(), languageKeywords.getLanguageName(), languageKeywords.getNativeName());
     }
 
     private List<Example> mapToExamples(com.github.fridujo.glacio.ast.Feature astFeature) {

@@ -1,15 +1,14 @@
 package com.github.fridujo.glacio.parsing.i18n;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.github.fridujo.glacio.ast.Position;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-
-import com.github.fridujo.glacio.ast.Position;
 
 public class GherkinLanguages implements Languages {
 
@@ -22,7 +21,7 @@ public class GherkinLanguages implements Languages {
     public static Languages load() throws IllegalStateException {
         try {
             try (InputStream inputStream = GherkinLanguages.class.getClassLoader().getResourceAsStream("gherkin-languages.json")) {
-                JsonObject jsonObject = Json.parse(new BufferedReader(new InputStreamReader(inputStream))).asObject();
+                JsonObject jsonObject = Json.parse(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).asObject();
                 return new GherkinLanguages(new GherkinJsonMapper().map(jsonObject));
             }
         } catch (IOException e) {

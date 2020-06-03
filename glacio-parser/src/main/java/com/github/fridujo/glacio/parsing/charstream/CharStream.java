@@ -9,6 +9,8 @@ public class CharStream {
     private int pos;
     private int line = 1;
     private int col;
+    private int prevLine = 1;
+    private int prevCol;
     private boolean endReached;
 
     public CharStream(String input) {
@@ -29,6 +31,8 @@ public class CharStream {
     }
 
     private void updatePosition(Character ch) {
+        prevLine = line;
+        prevCol = col;
         pos++;
         if (ch == '\n') {
             line++;
@@ -119,5 +123,9 @@ public class CharStream {
 
     public Position getPosition() {
         return new Position(line, col);
+    }
+    
+    public Position getPreviousPosition() {
+        return new Position(prevLine, prevCol);
     }
 }

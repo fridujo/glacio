@@ -1,14 +1,17 @@
 package com.github.fridujo.glacio.parsing.i18n;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-import com.github.fridujo.glacio.ast.Position;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+
+import com.github.fridujo.glacio.ast.Position;
 
 public class GherkinLanguages implements Languages {
 
@@ -34,5 +37,9 @@ public class GherkinLanguages implements Languages {
             throw new LanguageNotFoundException(position.asParsingPosition(), language, languageKeywordsByLanguages.keySet());
         }
         return languageKeywordsByLanguages.get(language);
+    }
+
+    public Set<String> availableLanguages() {
+        return languageKeywordsByLanguages.keySet();
     }
 }

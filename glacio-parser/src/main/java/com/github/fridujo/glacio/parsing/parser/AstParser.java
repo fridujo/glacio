@@ -1,5 +1,6 @@
 package com.github.fridujo.glacio.parsing.parser;
 
+import static com.github.fridujo.glacio.ast.Position.from;
 import static com.github.fridujo.glacio.parsing.parser.DynamicTokenDefinition.dynamicToken;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import com.github.fridujo.glacio.ast.Keyword;
 import com.github.fridujo.glacio.ast.KeywordType;
 import com.github.fridujo.glacio.ast.Position;
 import com.github.fridujo.glacio.ast.PositionedString;
-import com.github.fridujo.glacio.ast.RootStep;
 import com.github.fridujo.glacio.ast.Scenario;
 import com.github.fridujo.glacio.ast.ScenarioOutline;
 import com.github.fridujo.glacio.ast.Step;
@@ -59,7 +59,7 @@ public class AstParser {
                 Optional<String> description = parseDescription();
                 Optional<Background> background = parseBackground();
                 List<Scenario> scenarios = parseScenarios();
-                return new Feature(potentialFeature.getPosition().asModelPosition(), name, language, tags, description, background, scenarios);
+                return new Feature(from(potentialFeature.getPosition()), from(lexer.getCurrentTokenEndPosition()), name, language, tags, description, background, scenarios);
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -78,8 +78,8 @@ public class AstParser {
             if (potentialColon.isOfType(TokenType.COLON)) {
                 lexer.consumeUntilNextLine();
                 Optional<String> description = parseDescription();
-                List<RootStep> steps = parseRootSteps();
-                return Optional.of(new Background(potentialBackgroundToken.getPosition().asModelPosition(), description, steps));
+                List<Step> steps = parseRootSteps();
+                return Optional.of(new Background(from(potentialBackgroundToken.getPosition()), from(lexer.getCurrentTokenEndPosition()), description, steps));
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -104,11 +104,11 @@ public class AstParser {
             lexer.skipBlanks();
             Token potentialColon = lexer.next();
             if (potentialColon.isOfType(TokenType.COLON)) {
-                Position position = potentialScenario.getPosition().asModelPosition();
+                Position startPosition = from(potentialScenario.getPosition());
                 String name = lexer.consumeUntilNextLine().toLiteral().trim();
                 Optional<String> description = parseDescription();
-                List<RootStep> steps = parseRootSteps();
-                return new Scenario(position, name, tags, description, steps);
+                List<Step> steps = parseRootSteps();
+                return new Scenario(startPosition, from(lexer.getCurrentTokenEndPosition()), name, tags, description, steps);
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -116,12 +116,12 @@ public class AstParser {
             lexer.skipBlanks();
             Token potentialColon = lexer.next();
             if (potentialColon.isOfType(TokenType.COLON)) {
-                Position position = potentialScenario.getPosition().asModelPosition();
+                Position startPosition = from(potentialScenario.getPosition());
                 String name = lexer.consumeUntilNextLine().toLiteral().trim();
                 Optional<String> description = parseDescription();
-                List<RootStep> steps = parseRootSteps();
+                List<Step> steps = parseRootSteps();
                 Examples examples = parseExamples();
-                return new ScenarioOutline(position, name, tags, description, steps, examples);
+                return new ScenarioOutline(startPosition, from(lexer.getCurrentTokenEndPosition()), name, tags, description, steps, examples);
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -133,22 +133,22 @@ public class AstParser {
         }
     }
 
-    private List<RootStep> parseRootSteps() {
+    private List<Step> parseRootSteps() {
         lexer.skipBlanksAndEOL();
         consumeComments(false);
 
-        List<RootStep> rootSteps = new ArrayList<>();
+        List<Step> rootSteps = new ArrayList<>();
         KeywordType previousKeywordType = null;
         while (lexer.peek().isOfAnyType(TokenType.GIVEN, TokenType.WHEN, TokenType.THEN, TokenType.AND)) {
             Token keywordToken = lexer.next();
-            Position position = keywordToken.getPosition().asModelPosition();
+            Position startPosition = from(keywordToken.getPosition());
             Keyword keyword = mapKeyword(keywordToken, previousKeywordType);
             previousKeywordType = keyword.getType();
             String text = lexer.consumeUntilNextLine().toLiteral();
             Optional<DocString> docString = parseDocString();
             Optional<DataTable> dataTable = parseDataTable();
             List<Step> substeps = parseSubsteps();
-            rootSteps.add(new RootStep(position, keyword, text, substeps, docString, dataTable));
+            rootSteps.add(new Step(startPosition, from(lexer.getCurrentTokenEndPosition()), Optional.of(keyword), text, substeps, docString, dataTable));
             consumeComments(false);
         }
 
@@ -160,12 +160,12 @@ public class AstParser {
         if (lexer.peek().isOfType(TokenType.INDENT)) {
             lexer.next();
             while (!lexer.peek().isOfAnyType(TokenType.DEDENT, TokenType.EOF)) {
-                Position position = lexer.peek().getPosition().asModelPosition();
+                Position startPosition = from(lexer.peek().getPosition());
                 String text = lexer.consumeUntilNextLine().toLiteral();
                 Optional<DocString> docString = parseDocString();
                 Optional<DataTable> dataTable = parseDataTable();
                 List<Step> substeps = parseSubsteps();
-                steps.add(new Step(position, text, substeps, docString, dataTable));
+                steps.add(new Step(startPosition, from(lexer.getCurrentTokenEndPosition()), Optional.empty(), text, substeps, docString, dataTable));
             }
             lexer.next(); // Consume DEDENT
         }
@@ -210,7 +210,7 @@ public class AstParser {
                 while (lexer.peek().isOfType(TokenType.TABLE_DELIMITER)) {
                     body.add(parseTableRow());
                 }
-                return new Examples(potentialExamples.getPosition().asModelPosition(), header, body);
+                return new Examples(from(potentialExamples.getPosition()), from(lexer.getCurrentTokenEndPosition()), header, body);
             } else {
                 throw new MissingTokenException(FixedTokenDefinition.COLON, potentialColon);
             }
@@ -231,7 +231,7 @@ public class AstParser {
             lexer.next(); // Consume second delimiter
             lexer.skipTokensOfType(TokenType.SPACE, TokenType.EOL, TokenType.INDENT);
             String content = formatTextBloc(contentTokenSequence.toLiteral());
-            docString = Optional.of(new DocString(potentialDocStringDelimiter.getPosition().asModelPosition(), contentType, content));
+            docString = Optional.of(new DocString(from(potentialDocStringDelimiter.getPosition()), from(lexer.getCurrentTokenEndPosition()), contentType, content));
         } else {
             docString = Optional.empty();
         }
@@ -248,7 +248,7 @@ public class AstParser {
             while (lexer.peekNextNonBlankToken().isOfType(TokenType.TABLE_DELIMITER)) {
                 rows.add(parseTableRow());
             }
-            return Optional.of(new DataTable(potentialFirstTableDelimiter.getPosition().asModelPosition(), rows));
+            return Optional.of(new DataTable(from(potentialFirstTableDelimiter.getPosition()), from(lexer.getCurrentTokenEndPosition()), rows));
         } else {
             docString = Optional.empty();
         }
@@ -269,7 +269,7 @@ public class AstParser {
                 lexer.skipBlanks();
             }
             lexer.consumeUntilNextLine();
-            return new TableRow(potentialTableDelimiter.getPosition().asModelPosition(), cells);
+            return new TableRow(from(potentialTableDelimiter.getPosition()), from(lexer.getCurrentTokenEndPosition()), cells);
         } else {
             throw new MissingTokenException(FixedTokenDefinition.TABLE_DELIMITER, potentialTableDelimiter);
         }
@@ -285,9 +285,9 @@ public class AstParser {
             Matcher languageMatcher = languageHintPattern.matcher(comment);
             if (interpretLanguageHint && languageMatcher.matches()) {
                 String language = languageMatcher.group("language");
-                Position languagePosition = tokenSequence.getPosition().asModelPosition();
+                Position languagePosition = from(tokenSequence.getPosition());
                 lexer.setLanguageKeywords(languages.get(languagePosition, language));
-                explicitLanguage = new PositionedString(languagePosition, language);
+                explicitLanguage = new PositionedString(languagePosition, from(lexer.getCurrentTokenEndPosition()), language);
             }
             lexer.skipBlanksAndEOL();
         }

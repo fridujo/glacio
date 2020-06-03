@@ -15,6 +15,10 @@ public class Position {
         return column;
     }
 
+    public int getLine() {
+        return line;
+    }
+
     @Override
     public String toString() {
         return '[' +
@@ -35,9 +39,5 @@ public class Position {
     @Override
     public int hashCode() {
         return Objects.hash(line, column);
-    }
-
-    public com.github.fridujo.glacio.ast.Position asModelPosition() {
-        return new com.github.fridujo.glacio.ast.Position(line, column);
     }
 }

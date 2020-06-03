@@ -11,6 +11,10 @@ public class Position {
         this.column = column;
     }
 
+    public static Position from(com.github.fridujo.glacio.parsing.charstream.Position position) {
+        return new Position(position.getLine(), position.getColumn());
+    }
+
     public int getLine() {
         return line;
     }
@@ -43,5 +47,15 @@ public class Position {
             "line=" + line +
             ", column=" + column +
             '}';
+    }
+
+    public boolean isIn(Positioned positioned) {
+        return (
+            line == positioned.startPosition().line && column >= positioned.startPosition().column
+                || line > positioned.startPosition().line)
+            && (
+            line == positioned.endPosition().line && column <= positioned.endPosition().column
+                || line < positioned.endPosition().line
+        );
     }
 }

@@ -3,16 +3,20 @@ package com.github.fridujo.glacio.ast;
 import java.util.List;
 import java.util.Optional;
 
-public class Step implements Positioned {
+public class Step implements Positioned, Visitable {
 
-    private final Position position;
+    private final Position startPosition;
+    private final Position endPosition;
+    private final Optional<Keyword> keyword;
     private final String text;
     private final List<Step> substeps;
     private final Optional<DocString> docString;
     private final Optional<DataTable> dataTable;
 
-    public Step(Position position, String text, List<Step> substeps, Optional<DocString> docString, Optional<DataTable> dataTable) {
-        this.position = position;
+    public Step(Position startPosition, Position endPosition, Optional<Keyword> keyword, String text, List<Step> substeps, Optional<DocString> docString, Optional<DataTable> dataTable) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.keyword = keyword;
         this.text = text;
         this.docString = docString;
         this.dataTable = dataTable;
@@ -20,8 +24,17 @@ public class Step implements Positioned {
     }
 
     @Override
-    public Position getPosition() {
-        return position;
+    public Position startPosition() {
+        return startPosition;
+    }
+
+    @Override
+    public Position endPosition() {
+        return endPosition;
+    }
+
+    public Optional<Keyword> getKeyword() {
+        return keyword;
     }
 
     public String getText() {
@@ -42,6 +55,14 @@ public class Step implements Positioned {
 
     @Override
     public String toString() {
-        return text;
+        return keyword.map(s -> s + " ").orElse("") + text;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitStep(this);
+        docString.ifPresent(ds -> ds.accept(visitor));
+        dataTable.ifPresent(dt -> dt.accept(visitor));
+        substeps.forEach(s -> s.accept(visitor));
     }
 }

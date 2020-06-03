@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import com.github.fridujo.glacio.ast.Background;
 import com.github.fridujo.glacio.ast.KeywordType;
 import com.github.fridujo.glacio.ast.PositionedString;
-import com.github.fridujo.glacio.ast.RootStep;
 import com.github.fridujo.glacio.ast.Scenario;
 import com.github.fridujo.glacio.ast.ScenarioOutline;
 import com.github.fridujo.glacio.ast.TableRow;
@@ -63,7 +62,7 @@ public class ModelParser {
     }
 
     private Language mapToLanguage(Optional<PositionedString> language, Languages languages) {
-        LanguageKeywords languageKeywords = language.map(l -> languages.get(l.getPosition(), l.getValue())).orElse(languages.defaultLanguage());
+        LanguageKeywords languageKeywords = language.map(l -> languages.get(l.startPosition(), l.getValue())).orElse(languages.defaultLanguage());
 
         return new Language(languageKeywords.getCode(), languageKeywords.getLanguageName(), languageKeywords.getNativeName());
     }
@@ -137,13 +136,7 @@ public class ModelParser {
     }
 
     private Step mapToStep(com.github.fridujo.glacio.ast.Step astStep, boolean background, Map<String, String> parameters) {
-        Optional<Keyword> keyword;
-        if (astStep instanceof RootStep) {
-            com.github.fridujo.glacio.ast.Keyword astKeyword = ((RootStep) astStep).getKeyword();
-            keyword = Optional.of(new Keyword(astKeyword.getLiteral(), mapToKeywordType(astKeyword)));
-        } else {
-            keyword = Optional.empty();
-        }
+        Optional<Keyword> keyword = astStep.getKeyword().map(astKeyword -> new Keyword(astKeyword.getLiteral(), mapToKeywordType(astKeyword)));
         List<Step> substeps = astStep.getSubsteps().stream().map(s -> mapToStep(s, background, parameters)).collect(Collectors.toList());
         String text = resolveVariables(astStep.getText(), parameters);
         Optional<StepArgument> argument;

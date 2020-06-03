@@ -169,6 +169,10 @@ public class Lexer {
         next(); // Consume EOL if any
         return tokenSequence;
     }
+    
+    public Position getCurrentTokenEndPosition() {
+        return charStream.getPreviousPosition();
+    }
 
     private void computeIndentation(String literal, Position position) {
         int spaceCount = countSpaces(literal);

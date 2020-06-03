@@ -21,6 +21,7 @@
         <minimal-json.version>0.9.5</minimal-json.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <lsp4j.version>0.9.0</lsp4j.version>
 
         <junit.version>5.6.2</junit.version>
         <junit-platform.version>1.6.2</junit-platform.version>
@@ -35,6 +36,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <download-maven-plugin.version>1.6.0</download-maven-plugin.version>
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 
         <pitest-junit5.version>0.12</pitest-junit5.version>
         <pitest-maven-plugin.version>1.5.2</pitest-maven-plugin.version>
@@ -46,6 +48,7 @@
         <module>glacio-runner</module>
         <module>glacio-junit-engine</module>
         <module>glacio-spring</module>
+        <module>glacio-lsp</module>
     </modules>
 
     <scm>
@@ -153,6 +156,22 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.lsp4j</groupId>
+                <artifactId>org.eclipse.lsp4j</artifactId>
+                <version>${lsp4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.lsp4j</groupId>
+                <artifactId>org.eclipse.lsp4j.jsonrpc</artifactId>
+                <version>${lsp4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.lsp4j</groupId>
+                <artifactId>org.eclipse.lsp4j.debug</artifactId>
+                <version>${lsp4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -222,6 +241,11 @@
         </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>

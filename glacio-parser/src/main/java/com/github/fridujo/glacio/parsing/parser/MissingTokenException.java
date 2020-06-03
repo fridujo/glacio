@@ -1,6 +1,10 @@
 package com.github.fridujo.glacio.parsing.parser;
 
+import static java.util.Collections.emptyList;
+
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.fridujo.glacio.parsing.ParsingException;
@@ -8,9 +12,12 @@ import com.github.fridujo.glacio.parsing.lexer.FixedTokenDefinition;
 import com.github.fridujo.glacio.parsing.lexer.Token;
 
 public class MissingTokenException extends ParsingException {
+    
+    private final List<DynamicTokenDefinition> expectedTokens;
 
     public MissingTokenException(FixedTokenDefinition expected, Token found) {
         super(found.getPosition(), "Expecting " + expected.getType().name() + " token (" + characterWording(expected) + " '" + expected.getLiteralString() + "'), but found " + found);
+        expectedTokens = emptyList();
     }
 
     public MissingTokenException(Token found, DynamicTokenDefinition... expectations) {
@@ -19,6 +26,7 @@ public class MissingTokenException extends ParsingException {
             .map(MissingTokenException::wording)
             .collect(Collectors.joining(" or "))
             + ", but found " + found);
+        expectedTokens = Arrays.asList(expectations);
     }
 
     private static String wording(DynamicTokenDefinition dynamicTokenDefinition) {
@@ -33,5 +41,9 @@ public class MissingTokenException extends ParsingException {
             wording = "character";
         }
         return wording;
+    }
+
+    public List<DynamicTokenDefinition> getExpectedTokens() {
+        return expectedTokens;
     }
 }

@@ -39,7 +39,10 @@ import com.github.fridujo.glacio.parsing.parser.AstParser;
 
 public class ModelParser {
 
-    private final Pattern GLACIO_PLACEHOLDERS_PATTERN = Pattern.compile("<([^>]+)>");
+    private final String GLACIO_PLACEHOLDER_START = "<";
+    private final String GLACIO_PLACEHOLDER_END = ">";
+    private final String GLACIO_PLACEHOLDER_TEMPLATE = GLACIO_PLACEHOLDER_START + "%s" + GLACIO_PLACEHOLDER_END;
+    private final Pattern GLACIO_PLACEHOLDERS_PATTERN = Pattern.compile(GLACIO_PLACEHOLDER_START + "([^>]+)" + GLACIO_PLACEHOLDER_END);
     private final Languages languages;
 
     public ModelParser(Languages languages) {
@@ -195,11 +198,16 @@ public class ModelParser {
     }
 
     private String resolveVariables(String text, Map<String, String> executionParameters) {
+        if (executionParameters.isEmpty()) {
+            return text;
+        }
+
         StringBuffer sb = new StringBuffer();
         Matcher matcher = GLACIO_PLACEHOLDERS_PATTERN.matcher(text);
         while (matcher.find()) {
             String varName = matcher.group(1);
-            String replacement = executionParameters.get(varName);
+            String replacement = Optional.ofNullable(executionParameters.get(varName))
+                .orElseGet(() -> String.format(GLACIO_PLACEHOLDER_TEMPLATE, varName));
             matcher.appendReplacement(sb, replacement);
         }
         matcher.appendTail(sb);

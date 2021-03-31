@@ -34,7 +34,7 @@
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
-        <download-maven-plugin.version>1.6.1</download-maven-plugin.version>
+        <download-maven-plugin.version>1.6.2</download-maven-plugin.version>
 
         <pitest-junit5.version>0.14</pitest-junit5.version>
         <pitest-maven-plugin.version>1.6.4</pitest-maven-plugin.version>
